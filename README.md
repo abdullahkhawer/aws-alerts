@@ -5,7 +5,7 @@
 
 ## Introduction
 
-AWS Failure Error Warning Termination Notification Framework v1.0 is an AWS based failure, error, warning and termination notification solution for various services under one AWS CloudFormation stack using AWS CloudWatch events for failures, errors, warnings and terminations of resources of various AWS services, AWS CloudWatch alarm for AWS Lambda function failures, AWS Lambda Function using a Python script that is using Boto3 to publish AWS CloudFormation failures on AWS SNS topic and AWS DMS and AWS RDS event subscriptions for failures, errors and terminations.
+AWS Failure Error Warning Termination Notification Framework is an AWS based failure, error, warning and termination notification solution for various services under one AWS CloudFormation stack using AWS CloudWatch events for failures, errors, warnings and terminations of resources of various AWS services, AWS CloudWatch alarm for AWS Lambda function failures, AWS Lambda Function using a Python script that is using Boto3 to publish AWS CloudFormation failures on AWS SNS topic and AWS DMS and AWS RDS event subscriptions for failures, errors and terminations.
 
 Following are the AWS services for which you can enable failures, errors, warnings and terminations notifications:
 -   **AWS Batch**
@@ -40,7 +40,7 @@ Following are the AWS services for which you can enable failures, errors, warnin
 -   **AWS Transcribe**
 -   **AWS Trusted Advisor (TA)**
 
-You can even disable the created AWS CloudWatch events, AWS CloudWatch alarm, DMS and RDS subscriptions in a single click without deleting its AWS CloudFormation stack but that may create a stack drift.
+You can even disable the created AWS CloudWatch events, AWS CloudWatch alarm, DMS and RDS subscriptions in a single click without deleting its AWS CloudFormation stack for different AWS services but that may create a stack drift. You can also update the stack to add or remove notification resources for different AWS services on the basis of the values of the stack parameters.
 
 AWS Lambda function used for AWS CloudFormation failures management is using Python 3.7 as its runtime environment.
 

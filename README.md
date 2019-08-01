@@ -1,55 +1,92 @@
-# AWS Auto Terminate Idle AWS EMR Clusters Framework
+# AWS Failure Error Warning Termination Notification Framework
 
 -   Founder: Abdullah Khawer (LinkedIn: https://www.linkedin.com/in/abdullah-khawer/)
 -   Version: v1.0
 
 ## Introduction
 
-AWS Auto Terminate Idle AWS EMR Clusters Framework v1.0 is an AWS based solution using AWS CloudWatch and AWS Lambda using a Python script that is using Boto3 to terminate AWS EMR clusters that have been idle for a specified period of time.
+AWS Failure Error Warning Termination Notification Framework v1.0 is an AWS based failure, error, warning and termination notification solution for various services under one AWS CloudFormation stack using AWS CloudWatch events for failures, errors, warnings and terminations of resources of various AWS services, AWS CloudWatch alarm for AWS Lambda function failures, AWS Lambda Function using a Python script that is using Boto3 to publish AWS CloudFormation failures on AWS SNS topic and AWS DMS and AWS RDS event subscriptions for failures, errors and terminations.
 
-You specify the maximum idle time threshold and AWS CloudWatch event/rule triggers an AWS Lambda function that queries all AWS EMR clusters in WAITING state and for each, compares the current time with AWS EMR cluster's ready time in case of no EMR steps added so far or compares the current time with AWS EMR cluster's last step's end time. If the threshold has been compromised, the AWS EMR will be terminated after removing termination protection if enabled. If not, it will skip that AWS EMR cluster.
+Following are the AWS services for which you can enable failures, errors, warnings and terminations notifications:
+-   **AWS Batch**
+-   **AWS CloudFormation (CF)**
+-   **AWS CodeBuild (CB)**
+-   **AWS CodeDeploy (CD)**
+-   **AWS CodePipeline (CP)**
+-   **AWS Config**
+-   **AWS Data Lifecycle Manager (DLM)**
+-   **AWS DataSync (DS)**
+-   **AWS Database Migration Service (DMS)**
+-   **AWS Elastic Block Store (EBS)**
+-   **AWS Elastic Compute Cloud (EC2) Auto Scaling**
+-   **AWS Elastic Compute Cloud (EC2)**
+-   **AWS Elastic Container Service (ECS)**
+-   **AWS Elemental**
+-   **AWS Elastic Map Reduce (EMR)**
+-   **AWS GameLift (GL)**
+-   **AWS Glue**
+-   **AWS Health**
+-   **AWS Internet of Things (IoT)**
+-   **AWS Key Management Service (KMS)**
+-   **AWS Lambda**
+-   **AWS Macie**
+-   **AWS OpsWorks**
+-   **AWS Relation Database Service (RDS)**
+-   **AWS SageMaker**
+-   **AWS Signer**
+-   **AWS Server Migration Service (SMS)**
+-   **AWS Systems Manager (SSM)**
+-   **AWS Step Functions (SF)**
+-   **AWS Transcribe**
+-   **AWS Trusted Advisor (TA)**
 
-AWS CloudWatch event/rule will decide how often AWS Lambda function should check for idle AWS EMR clusters.
+You can even disable the created AWS CloudWatch events, AWS CloudWatch alarm, DMS and RDS subscriptions in a single click without deleting its AWS CloudFormation stack but that may create a stack drift.
 
-You can disable the AWS CloudWatch event/rule at any time to disable this framework in a single click without deleting its AWS CloudFormation stack.
-
-AWS Lambda function is using Python 3.7 as its runtime environment.
+AWS Lambda function used for AWS CloudFormation failures management is using Python 3.7 as its runtime environment.
 
 ### Any contributions, improvements and suggestions will be highly appreciated.
 
 ## Components Used
 
 Following are the components used in this framework:
--   Python script having the main logic developed in Python 3.7.
--   Boto3 for AWS resources access in Python.
 -   AWS CloudFormation template (both in JSON and YAML) for stack deployment.
--   AWS CloudWatch event for scheduling trigger.
--   AWS Lambda function to execute the main Python script.
+-   Python script having the logic to manage AWS CloudFormation failures developed in Python 3.7.
+-   Boto3 for AWS resources access in Python.
+-   AWS Lambda function to execute the above mentioned Python script.
 -   AWS IAM role used by the Lambda function with least privileges.
--   AWS Lambda Invoke Permission for AWS CloudWatch event.
+-   AWS Lambda Invoke Permission for AWS SNS topic.
+-   AWS CloudWatch events for the failures, errors, warnings and terminations notifications of various AWS services triggered upon events.
+-   AWS CloudWatch alarm for the failures of AWS Lambda functions.
+-   AWS RDS and DMS event subscriptions for the failures, errors, warnings and terminations of AWS RDS and DMS resources respectively.
+-   AWS SNS topic for receiving and sending notifications to an email based subscribed endpoint for AWS CloudFormation notifications.
+-   AWS SNS topic for receiving and sending notifications to an email based subscribed endpoint for failures, errors, warnings and terminations notifications of various AWS services.
+-   AWS SNS topic policies for the above mentioned AWS SNS topics with sufficient permissions to allow publishing of messages on these AWS SNS topics.
 
-## Usage Notes
+## Deployment and Usage Notes
 
 Following are the steps to successfully deploy and use this framework:
 -   Clone this repository from the master branch.
--   Compress *aws_auto_terminate_idle_emr.py* file in zip format and put it on AWS S3 bucket.
+-   Compress **aws_cloudformation_failure_notification.py** file in zip format and put it on AWS S3 bucket.
 -   Login to AWS console with IAM user credentials having the required admin privileges to create resources via AWS CloudFormation.
--   Go to AWS CloudFormation and choose to *Create Stack*.
--   Under *Choose a template*, either upload *aws_auto_terminate_idle_emr_cft.json* or *aws_auto_terminate_idle_emr_cft.yaml* from here or put it on AWS S3 bucket and enter AWS S3 URL for that file.
--   Enter any suitable *Stack Name*.
--   Enter *CloudWatchEventScheduleExpression* which is AWS CloudWatch Event's Schedule Expression in the form of either Rate Function (e.g., rate(5 minutes)) or Cron Expression (e.g., cron(0/5 * * * ? *)) which will decide how ofter to trigger AWS Lambda function that does the actual job.
--   Enter *LambdaCodeS3Bucket* which is AWS S3 Bucket Name having AWS Lambda Function Code (e.g., my-bucket).
--   Enter *LambdaCodeS3BucketKey* which is AWS S3 Bucket Key having AWS Lambda Function Code (e.g., lambda/code/aws_auto_terminate_idle_emr.zip).
--   Enter *MaxIdleTimeInMinutes* which is Maximum Idle Time in Minutes for Any AWS EMR Cluster.
--   Enter suitable Tags if required.
--   Under *Review*, select *I acknowledge that AWS CloudFormation might create IAM resources with custom names.* and click create.
--   Wait for the stack to change its *Status* to *CREATE_COMPLETE*.
+-   Go to AWS CloudFormation and choose to **Create Stack**.
+-   Under **Choose a template**, either upload **aws_failure_error_warning_termination_notification_framework_cft.json** or **aws_failure_error_warning_termination_notification_framework_cft.yaml** from here or put it on AWS S3 bucket and enter AWS S3 URL for that file.
+-   Enter any suitable **Stack Name**.
+-   Enter **FailureErrorWarningTerminationNotificationSNSTopicEmail** which is the email address where you receive all notifications from AWS SNS topic. (e.g., abcxyz@gmail.com).
+-   If you want to enable AWS CloudFormation failures notifications, select yes for **EnableCloudFormationFailureNotification** and then specify the following:
+    -   Enter **CloudFormationFailureLambdaCodeS3Bucket** which is an AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code. (e.g., my-bucket).
+    -   Enter **CloudFormationFailureLambdaCodeS3Key** which is an AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code (e.g., lambda/code/aws_cloudformation_failure_notification.zip).
+-   Similarly, for which ever AWS service you want to enable failures, errors, warnings and terminations notifications, select yes for that AWS service's parameter that is starting with **Enable...**
+-   Enter suitable **Tags** if required.
+-   Under **Review**, select **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** and click create.
+-   Wait for the stack to change its **Status** to **CREATE_COMPLETE**.
+-   Confirm the subscription to the AWS SNS topic by either clicking on the URL received on the email address specified above during deployment or confirming the subscription from AWS SNS console.
 -   Voila, you are done and everything is now up and running.
 
+*NOTE: For AWS CloudFormation, AWS DataPipeline, AWS S3 for Object in RRS lost, any other AWS service that is not covered and supports failures notifications or any other custom notification solution that you have built, refer the following AWS SNS topic that is created for the sole purpose of the receival of failures, errors, warnings and terminations notifications and that is **failure-error-warning-termination-notification-sns-topic**.*
+
+## Troubleshooting Notes
+
+-   If the email is not receiving email or the AWS CloudWatch alarm isn't working, try resubscribing to the AWS SNS topic or updating the notification action in AWS CloudWatch alarm.
+-   If some other issue occurs, kindly create an issue on this GitHub repository for its resolution or any help assistance.
+
 ### Warning: You will be billed for the AWS resources used if you create a stack for this framework.
-
-## Future Improvements
-
-Following are the future improvements in the queue:
--   Add the capability to avoid a race condition (e.g., using AWS DynamoDB).
--   Update the AWS CloudFormation template with the new AWS resources added to achieve avoiding a race condition.

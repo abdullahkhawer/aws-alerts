@@ -4,303 +4,302 @@
   "Parameters": {
     "FailureErrorWarningTerminationNotificationSNSTopicEmail": {
       "Description": "Email Address for AWS Failure, Error, Warning and Termination Notification SNS Topic.",
-      "Type": "String",
-      "AllowedPattern": "/[^\\s@]+@[^\\s@]+\\.[^\\s@]+/"
+      "Type": "String"
     },
     "EnableCloudFormationFailureNotification": {
       "Description": "Option to Enable AWS CloudFormation Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "CloudFormationFailureLambdaCodeS3Bucket": {
       "Description": "AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code.",
       "Type": "String",
-      "Default": ""
+      "Default": "Required if CF Failure Notification is Enabled"
     },
     "CloudFormationFailureLambdaCodeS3BucketKey": {
       "Description": "AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code.",
       "Type": "String",
-      "Default": ""
+      "Default": "Required if CF Failure Notification is Enabled"
     },
     "EnableLambdaFailureNotification": {
       "Description": "Option to Enable AWS Lambda Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableDMSFailureWarningNotification": {
       "Description": "Option to Enable AWS DMS Failure and Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableRDSFailureWarningNotification": {
       "Description": "Option to Enable AWS RDS Failure and Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableCodeBuildFailureNotification": {
       "Description": "Option to Enable AWS CodeBuild Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEC2AutoScalingFailureNotification": {
       "Description": "Option to Enable AWS EC2 Auto Scaling Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableBatchFailureNotification": {
       "Description": "Option to Enable AWS Batch Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableCodeDeployFailureNotification": {
       "Description": "Option to Enable AWS CodeDeploy Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableCodePipelineFailureNotification": {
       "Description": "Option to Enable AWS CodePipeline Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableConfigFailureNotification": {
       "Description": "Option to Enable AWS Config Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEBSFailureNotification": {
       "Description": "Option to Enable AWS EBS Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableGlueFailureNotification": {
       "Description": "Option to Enable AWS Glue Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEMRFailureNotification": {
       "Description": "Option to Enable AWS EMR Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEMRErrorNotification": {
       "Description": "Option to Enable AWS EMR Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableECSInstanceTerminationNotification": {
       "Description": "Option to Enable AWS ECS Instance Termination Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableECSTaskTerminationNotification": {
       "Description": "Option to Enable AWS ECS Task Termination Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEC2InstanceTerminationNotification": {
       "Description": "Option to Enable AWS EC2 Instance Termination Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableEC2SpotInstanceErrorNotification": {
       "Description": "Option to Enable AWS EC2 Spot Instance Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableTrustedAdvisorErrorWarningNotification": {
       "Description": "Option to Enable AWS Trusted Advisor Error and Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableHealthErrorNotification": {
       "Description": "Option to Enable AWS Health Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSMSFailureNotification": {
       "Description": "Option to Enable AWS Server Migration Service Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableStepFunctionsFailureNotification": {
       "Description": "Option to Enable AWS Step Functions Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSSMMaintainanceWindowFailureNotification": {
       "Description": "Option to Enable AWS SSM Maintainance Window Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSSMEC2FailureNotification": {
       "Description": "Option to Enable AWS SSM EC2 State Manager, Run Command and Automation Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSSMComplianceWarningNotification": {
       "Description": "Option to Enable AWS SSM Compliance Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableOpsWorksFailureNotification": {
       "Description": "Option to Enable AWS OpsWorks Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableOpsWorksErrorNotification": {
       "Description": "Option to Enable AWS OpsWorks Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableKMSKeyExpirationWarningNotification": {
       "Description": "Option to Enable AWS KMS Key Expiration Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableMacieWarningNotification": {
       "Description": "Option to Enable AWS Macie Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableGameLiftFailureNotification": {
       "Description": "Option to Enable AWS GameLift Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableTranscribeFailureNotification": {
       "Description": "Option to Enable AWS Transcribe Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSignerFailureNotification": {
       "Description": "Option to Enable AWS Signer Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableDataSyncErrorWarningNotification": {
       "Description": "Option to Enable AWS DataSync Error and Warning Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableIoTAnalyticsFailureNotification": {
       "Description": "Option to Enable AWS IoT Analytics Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableDataLifecycleManagerErrorNotification": {
       "Description": "Option to Enable AWS Data Lifecycle Manager Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableElementalMediaPackageErrorNotification": {
       "Description": "Option to Enable AWS Elemental MediaPackage Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableElementalMediaLiveErrorNotification": {
       "Description": "Option to Enable AWS Elemental MediaLive Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableElementalMediaConvertErrorNotification": {
       "Description": "Option to Enable AWS Elemental MediaConvert Error Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSageMakerHyperParameterTuningFailureNotification": {
       "Description": "Option to Enable AWS SageMaker HyperParameter Tuning Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSageMakerTransformFailureNotification": {
       "Description": "Option to Enable AWS SageMaker Transform Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     },
     "EnableSageMakerTrainingFailureNotification": {
       "Description": "Option to Enable AWS SageMaker Training Failure Notification.",
       "Type": "String",
-      "Default": "NO",
+      "Default": "YES",
       "AllowedValues": ["YES", "NO"],
       "ConstraintDescription": "Select 'YES' or 'NO'"
     }
@@ -487,6 +486,70 @@
         ]
       }
     },
+    "FailureNotificationSNSTopicPolicy": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Id": "Pid1",
+          "Statement": [
+            {
+              "Sid": "Sid1",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": [
+                "SNS:Publish",
+                "SNS:RemovePermission",
+                "SNS:SetTopicAttributes",
+                "SNS:DeleteTopic",
+                "SNS:ListSubscriptionsByTopic",
+                "SNS:GetTopicAttributes",
+                "SNS:Receive",
+                "SNS:AddPermission",
+                "SNS:Subscribe"
+              ],
+              "Resource": {
+                "Ref": "FailureNotificationSNSTopic"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceOwner": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            },
+            {
+              "Sid": "Sid2",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "datapipeline.amazonaws.com",
+                  "dms.amazonaws.com",
+                  "events.amazonaws.com",
+                  "lambda.amazonaws.com",
+                  "cloudwatch.amazonaws.com",
+                  "monitoring.rds.amazonaws.com",
+                  "rds.amazonaws.com",
+                  "s3.amazonaws.com"
+                ]
+              },
+              "Action": ["SNS:Publish"],
+              "Resource": {
+                "Ref": "FailureNotificationSNSTopic"
+              }
+            }
+          ]
+        },
+        "Topics": [
+          {
+            "Ref": "FailureNotificationSNSTopic"
+          }
+        ]
+      }
+    },
     "CloudFormationFailureLambdaIAMRole": {
       "Type": "AWS::IAM::Role",
       "Condition": "CreateCloudFormationFailureResources",
@@ -528,10 +591,6 @@
       }
     },
     "CloudFormationFailureLambdaFunction": {
-      "DependsOn": [
-        "CloudFormationFailureLambdaIAMRole",
-        "FailureNotificationSNSTopic"
-      ],
       "Type": "AWS::Lambda::Function",
       "Condition": "CreateCloudFormationFailureResources",
       "Properties": {
@@ -540,9 +599,7 @@
         "Environment": {
           "Variables": {
             "FAILURE_SNS_TOPIC_ARN": {
-              "Fn::GetAtt": {
-                "Ref": "FailureNotificationSNSTopic"
-              }
+              "Ref": "FailureNotificationSNSTopic"
             }
           }
         },
@@ -559,7 +616,7 @@
           "Fn::GetAtt": ["CloudFormationFailureLambdaIAMRole", "Arn"]
         },
         "Runtime": "python3.7",
-        "Timeout": "60",
+        "Timeout": 60,
         "MemorySize": 128,
         "Tags": [
           {
@@ -570,12 +627,10 @@
       }
     },
     "CFNotificationSNSTopic": {
-      "DependsOn": ["CloudFormationFailureLambdaFunction"],
       "Type": "AWS::SNS::Topic",
       "Condition": "CreateCloudFormationFailureResources",
       "Properties": {
-        "TopicName": "cf-notification-SNS-topic",
-        "DisplayName": "CFNotificationSNSTopic",
+        "TopicName": "cf-notification-sns-topic",
         "Subscription": [
           {
             "Endpoint": {
@@ -586,11 +641,63 @@
         ]
       }
     },
+    "CFNotificationSNSTopicPolicy": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Condition": "CreateCloudFormationFailureResources",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Id": "Pid1",
+          "Statement": [
+            {
+              "Sid": "Sid1",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": [
+                "SNS:Publish",
+                "SNS:RemovePermission",
+                "SNS:SetTopicAttributes",
+                "SNS:DeleteTopic",
+                "SNS:ListSubscriptionsByTopic",
+                "SNS:GetTopicAttributes",
+                "SNS:Receive",
+                "SNS:AddPermission",
+                "SNS:Subscribe"
+              ],
+              "Resource": {
+                "Ref": "CFNotificationSNSTopic"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceOwner": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            },
+            {
+              "Sid": "Sid2",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["cloudformation.amazonaws.com"]
+              },
+              "Action": ["SNS:Publish"],
+              "Resource": {
+                "Ref": "CFNotificationSNSTopic"
+              }
+            }
+          ]
+        },
+        "Topics": [
+          {
+            "Ref": "CFNotificationSNSTopic"
+          }
+        ]
+      }
+    },
     "CloudFormationFailureLambdaInvokePermission": {
-      "DependsOn": [
-        "CloudFormationFailureLambdaFunction",
-        "CFNotificationSNSTopic"
-      ],
       "Type": "AWS::Lambda::Permission",
       "Condition": "CreateCloudFormationFailureResources",
       "Properties": {
@@ -600,14 +707,11 @@
         "Action": "lambda:InvokeFunction",
         "Principal": "sns.amazonaws.com",
         "SourceArn": {
-          "Fn::GetAtt": {
-            "Ref": "CFNotificationSNSTopic"
-          }
+          "Ref": "CFNotificationSNSTopic"
         }
       }
     },
     "LambdaFailureCloudWatchAlarm": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::CloudWatch::Alarm",
       "Condition": "CreateLambdaFailureResources",
       "Properties": {
@@ -617,7 +721,7 @@
         "MetricName": "Errors",
         "Dimensions": [],
         "DatapointsToAlarm": 1,
-        "Statistic": "Minimum",
+        "Statistic": "Sum",
         "ComparisonOperator": "GreaterThanThreshold",
         "Threshold": 0.0,
         "Period": 60,
@@ -630,12 +734,11 @@
       }
     },
     "DMSInstanceFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::DMS::EventSubscription",
       "Condition": "CreateDMSFailureWarningResources",
       "Properties": {
         "SubscriptionName": "dms-instance-failure-warning-event",
-        "EventCategories": ["Failure", "LowStorage", "Failover"],
+        "EventCategories": ["failure", "low storage", "failover", "deletion"],
         "SnsTopicArn": {
           "Ref": "FailureNotificationSNSTopic"
         },
@@ -649,12 +752,11 @@
       }
     },
     "DMSTaskFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::DMS::EventSubscription",
       "Condition": "CreateDMSFailureWarningResources",
       "Properties": {
         "SubscriptionName": "dms-task-failure-event",
-        "EventCategories": ["Failure"],
+        "EventCategories": ["failure", "deletion"],
         "SnsTopicArn": {
           "Ref": "FailureNotificationSNSTopic"
         },
@@ -668,7 +770,6 @@
       }
     },
     "RDSInstanceFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::RDS::EventSubscription",
       "Condition": "CreateRDSFailureWarningResources",
       "Properties": {
@@ -687,7 +788,6 @@
       }
     },
     "RDSSecurityGroupFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::RDS::EventSubscription",
       "Condition": "CreateRDSFailureWarningResources",
       "Properties": {
@@ -699,7 +799,6 @@
       }
     },
     "RDSSnapshotFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::RDS::EventSubscription",
       "Condition": "CreateRDSFailureWarningResources",
       "Properties": {
@@ -711,7 +810,6 @@
       }
     },
     "RDSClusterFailureEvent": {
-      "DependsOn": ["FailureNotificationSNSTopic"],
       "Type": "AWS::RDS::EventSubscription",
       "Condition": "CreateRDSFailureWarningResources",
       "Properties": {

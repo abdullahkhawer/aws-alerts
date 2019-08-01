@@ -1,5 +1,0 @@
-ToDos!
-All CWs to CFT
-Data Pipeline: Mention in ReadMe - Use Failure SNS TOPIC
-CloudFormation: Mention in ReadMe - Use Failure SNS TOPIC
-S3: Mention in ReadMe - Object in RRS lost

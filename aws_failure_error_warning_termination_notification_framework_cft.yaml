@@ -1,0 +1,2124 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation Template to deploy the Failure, Error, Warning and
+  Termination Notification Framework. You will be billed for the AWS resources
+  used if you create a stack from this template.
+Parameters:
+  FailureErrorWarningTerminationNotificationSNSTopicEmail:
+    Description: >-
+      Email Address for AWS Failure, Error, Warning and Termination Notification
+      SNS Topic.
+    Type: String
+  EnableCloudFormationFailureNotification:
+    Description: Option to Enable AWS CloudFormation Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  CloudFormationFailureLambdaCodeS3Bucket:
+    Description: >-
+      AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS
+      Lambda Function Code.
+    Type: String
+    Default: Required if CF Failure Notification is Enabled
+  CloudFormationFailureLambdaCodeS3BucketKey:
+    Description: >-
+      AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS
+      Lambda Function Code.
+    Type: String
+    Default: Required if CF Failure Notification is Enabled
+  EnableLambdaFailureNotification:
+    Description: Option to Enable AWS Lambda Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableDMSFailureWarningNotification:
+    Description: Option to Enable AWS DMS Failure and Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableRDSFailureWarningNotification:
+    Description: Option to Enable AWS RDS Failure and Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableCodeBuildFailureNotification:
+    Description: Option to Enable AWS CodeBuild Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEC2AutoScalingFailureNotification:
+    Description: Option to Enable AWS EC2 Auto Scaling Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableBatchFailureNotification:
+    Description: Option to Enable AWS Batch Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableCodeDeployFailureNotification:
+    Description: Option to Enable AWS CodeDeploy Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableCodePipelineFailureNotification:
+    Description: Option to Enable AWS CodePipeline Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableConfigFailureNotification:
+    Description: Option to Enable AWS Config Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEBSFailureNotification:
+    Description: Option to Enable AWS EBS Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableGlueFailureNotification:
+    Description: Option to Enable AWS Glue Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEMRFailureNotification:
+    Description: Option to Enable AWS EMR Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEMRErrorNotification:
+    Description: Option to Enable AWS EMR Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableECSInstanceTerminationNotification:
+    Description: Option to Enable AWS ECS Instance Termination Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableECSTaskTerminationNotification:
+    Description: Option to Enable AWS ECS Task Termination Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEC2InstanceTerminationNotification:
+    Description: Option to Enable AWS EC2 Instance Termination Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableEC2SpotInstanceErrorNotification:
+    Description: Option to Enable AWS EC2 Spot Instance Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableTrustedAdvisorErrorWarningNotification:
+    Description: Option to Enable AWS Trusted Advisor Error and Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableHealthErrorNotification:
+    Description: Option to Enable AWS Health Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSMSFailureNotification:
+    Description: Option to Enable AWS Server Migration Service Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableStepFunctionsFailureNotification:
+    Description: Option to Enable AWS Step Functions Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSSMMaintainanceWindowFailureNotification:
+    Description: Option to Enable AWS SSM Maintainance Window Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSSMEC2FailureNotification:
+    Description: >-
+      Option to Enable AWS SSM EC2 State Manager, Run Command and Automation
+      Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSSMComplianceWarningNotification:
+    Description: Option to Enable AWS SSM Compliance Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableOpsWorksFailureNotification:
+    Description: Option to Enable AWS OpsWorks Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableOpsWorksErrorNotification:
+    Description: Option to Enable AWS OpsWorks Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableKMSKeyExpirationWarningNotification:
+    Description: Option to Enable AWS KMS Key Expiration Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableMacieWarningNotification:
+    Description: Option to Enable AWS Macie Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableGameLiftFailureNotification:
+    Description: Option to Enable AWS GameLift Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableTranscribeFailureNotification:
+    Description: Option to Enable AWS Transcribe Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSignerFailureNotification:
+    Description: Option to Enable AWS Signer Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableDataSyncErrorWarningNotification:
+    Description: Option to Enable AWS DataSync Error and Warning Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableIoTAnalyticsFailureNotification:
+    Description: Option to Enable AWS IoT Analytics Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableDataLifecycleManagerErrorNotification:
+    Description: Option to Enable AWS Data Lifecycle Manager Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableElementalMediaPackageErrorNotification:
+    Description: Option to Enable AWS Elemental MediaPackage Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableElementalMediaLiveErrorNotification:
+    Description: Option to Enable AWS Elemental MediaLive Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableElementalMediaConvertErrorNotification:
+    Description: Option to Enable AWS Elemental MediaConvert Error Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSageMakerHyperParameterTuningFailureNotification:
+    Description: Option to Enable AWS SageMaker HyperParameter Tuning Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSageMakerTransformFailureNotification:
+    Description: Option to Enable AWS SageMaker Transform Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+  EnableSageMakerTrainingFailureNotification:
+    Description: Option to Enable AWS SageMaker Training Failure Notification.
+    Type: String
+    Default: 'YES'
+    AllowedValues:
+      - 'YES'
+      - 'NO'
+    ConstraintDescription: Select 'YES' or 'NO'
+Conditions:
+  CreateCloudFormationFailureResources: !Equals 
+    - !Ref EnableCloudFormationFailureNotification
+    - 'YES'
+  CreateLambdaFailureResources: !Equals 
+    - !Ref EnableLambdaFailureNotification
+    - 'YES'
+  CreateDMSFailureWarningResources: !Equals 
+    - !Ref EnableDMSFailureWarningNotification
+    - 'YES'
+  CreateRDSFailureWarningResources: !Equals 
+    - !Ref EnableRDSFailureWarningNotification
+    - 'YES'
+  CreateCBFailureResources: !Equals 
+    - !Ref EnableCodeBuildFailureNotification
+    - 'YES'
+  CreateEC2AutoScalingFailureResources: !Equals 
+    - !Ref EnableEC2AutoScalingFailureNotification
+    - 'YES'
+  CreateBatchFailureResources: !Equals 
+    - !Ref EnableBatchFailureNotification
+    - 'YES'
+  CreateCodeDeployFailureResources: !Equals 
+    - !Ref EnableCodeDeployFailureNotification
+    - 'YES'
+  CreateCodePipelineFailureResources: !Equals 
+    - !Ref EnableCodePipelineFailureNotification
+    - 'YES'
+  CreateConfigFailureResources: !Equals 
+    - !Ref EnableConfigFailureNotification
+    - 'YES'
+  CreateEBSFailureResources: !Equals 
+    - !Ref EnableEBSFailureNotification
+    - 'YES'
+  CreateGlueFailureResources: !Equals 
+    - !Ref EnableGlueFailureNotification
+    - 'YES'
+  CreateEMRFailureResources: !Equals 
+    - !Ref EnableEMRFailureNotification
+    - 'YES'
+  CreateEMRErrorResources: !Equals 
+    - !Ref EnableEMRErrorNotification
+    - 'YES'
+  CreateECSInstanceTerminationResources: !Equals 
+    - !Ref EnableECSInstanceTerminationNotification
+    - 'YES'
+  CreateECSTaskTerminationResources: !Equals 
+    - !Ref EnableECSTaskTerminationNotification
+    - 'YES'
+  CreateEC2InstanceTerminationResources: !Equals 
+    - !Ref EnableEC2InstanceTerminationNotification
+    - 'YES'
+  CreateEC2SpotInstanceErrorResources: !Equals 
+    - !Ref EnableEC2SpotInstanceErrorNotification
+    - 'YES'
+  CreateTrustedAdvisorErrorWarningResources: !Equals 
+    - !Ref EnableTrustedAdvisorErrorWarningNotification
+    - 'YES'
+  CreateHealthErrorResources: !Equals 
+    - !Ref EnableHealthErrorNotification
+    - 'YES'
+  CreateSMSFailureResources: !Equals 
+    - !Ref EnableSMSFailureNotification
+    - 'YES'
+  CreateStepFunctionsFailureResources: !Equals 
+    - !Ref EnableStepFunctionsFailureNotification
+    - 'YES'
+  CreateSSMMaintainanceWindowFailureResources: !Equals 
+    - !Ref EnableSSMMaintainanceWindowFailureNotification
+    - 'YES'
+  CreateSSMEC2FailureResources: !Equals 
+    - !Ref EnableSSMEC2FailureNotification
+    - 'YES'
+  CreateSSMComplianceWarningResources: !Equals 
+    - !Ref EnableSSMComplianceWarningNotification
+    - 'YES'
+  CreateOpsWorksFailureResources: !Equals 
+    - !Ref EnableOpsWorksFailureNotification
+    - 'YES'
+  CreateOpsWorksErrorResources: !Equals 
+    - !Ref EnableOpsWorksErrorNotification
+    - 'YES'
+  CreateKMSKeyExpirationWarningResources: !Equals 
+    - !Ref EnableKMSKeyExpirationWarningNotification
+    - 'YES'
+  CreateMacieWarningResources: !Equals 
+    - !Ref EnableMacieWarningNotification
+    - 'YES'
+  CreateGameLiftFailureResources: !Equals 
+    - !Ref EnableGameLiftFailureNotification
+    - 'YES'
+  CreateTranscribeFailureResources: !Equals 
+    - !Ref EnableTranscribeFailureNotification
+    - 'YES'
+  CreateSignerFailureResources: !Equals 
+    - !Ref EnableSignerFailureNotification
+    - 'YES'
+  CreateDataSyncErrorWarningResources: !Equals 
+    - !Ref EnableDataSyncErrorWarningNotification
+    - 'YES'
+  CreateIoTAnalyticsFailureResources: !Equals 
+    - !Ref EnableIoTAnalyticsFailureNotification
+    - 'YES'
+  CreateDataLifecycleManagerErrorResources: !Equals 
+    - !Ref EnableDataLifecycleManagerErrorNotification
+    - 'YES'
+  CreateElementalMediaPackageErrorResources: !Equals 
+    - !Ref EnableElementalMediaPackageErrorNotification
+    - 'YES'
+  CreateElementalMediaLiveErrorResources: !Equals 
+    - !Ref EnableElementalMediaLiveErrorNotification
+    - 'YES'
+  CreateElementalMediaConvertErrorResources: !Equals 
+    - !Ref EnableElementalMediaConvertErrorNotification
+    - 'YES'
+  CreateSageMakerHyperParameterTuningFailureResources: !Equals 
+    - !Ref EnableSageMakerHyperParameterTuningFailureNotification
+    - 'YES'
+  CreateSageMakerTransformFailureResources: !Equals 
+    - !Ref EnableSageMakerTransformFailureNotification
+    - 'YES'
+  CreateSageMakerTrainingFailureResources: !Equals 
+    - !Ref EnableSageMakerTrainingFailureNotification
+    - 'YES'
+Resources:
+  FailureNotificationSNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      TopicName: failure-error-warning-termination-notification-sns-topic
+      Subscription:
+        - Endpoint: !Ref FailureErrorWarningTerminationNotificationSNSTopicEmail
+          Protocol: email
+  FailureNotificationSNSTopicPolicy:
+    Type: 'AWS::SNS::TopicPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Id: Pid1
+        Statement:
+          - Sid: Sid1
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action:
+              - 'SNS:Publish'
+              - 'SNS:RemovePermission'
+              - 'SNS:SetTopicAttributes'
+              - 'SNS:DeleteTopic'
+              - 'SNS:ListSubscriptionsByTopic'
+              - 'SNS:GetTopicAttributes'
+              - 'SNS:Receive'
+              - 'SNS:AddPermission'
+              - 'SNS:Subscribe'
+            Resource: !Ref FailureNotificationSNSTopic
+            Condition:
+              StringEquals:
+                'AWS:SourceOwner': !Ref 'AWS::AccountId'
+          - Sid: Sid2
+            Effect: Allow
+            Principal:
+              Service:
+                - datapipeline.amazonaws.com
+                - dms.amazonaws.com
+                - events.amazonaws.com
+                - lambda.amazonaws.com
+                - cloudwatch.amazonaws.com
+                - monitoring.rds.amazonaws.com
+                - rds.amazonaws.com
+                - s3.amazonaws.com
+            Action:
+              - 'SNS:Publish'
+            Resource: !Ref FailureNotificationSNSTopic
+      Topics:
+        - !Ref FailureNotificationSNSTopic
+  CloudFormationFailureLambdaIAMRole:
+    Type: 'AWS::IAM::Role'
+    Condition: CreateCloudFormationFailureResources
+    Properties:
+      RoleName: cf-failure-lambda-iam-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: CloudFormationFailureLambdaFunctionIAMPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'sns:Publish'
+                  - 'logs:CreateLogStream'
+                  - 'logs:CreateLogGroup'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+  CloudFormationFailureLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Condition: CreateCloudFormationFailureResources
+    Properties:
+      FunctionName: cf-failure-lambda-function
+      Description: >-
+        Lambda Function based on Python 3.7 to Send Notification on SNS
+        regarding CloudFormation Stacks Failures.
+      Environment:
+        Variables:
+          FAILURE_SNS_TOPIC_ARN: !Ref FailureNotificationSNSTopic
+      Code:
+        S3Bucket: !Ref CloudFormationFailureLambdaCodeS3Bucket
+        S3Key: !Ref CloudFormationFailureLambdaCodeS3BucketKey
+      Handler: aws_cloudformation_failure_notification.lambda_handler
+      Role: !GetAtt 
+        - CloudFormationFailureLambdaIAMRole
+        - Arn
+      Runtime: python3.7
+      Timeout: 60
+      MemorySize: 128
+      Tags:
+        - Key: Name
+          Value: cf-failure-lambda-function
+  CFNotificationSNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Condition: CreateCloudFormationFailureResources
+    Properties:
+      TopicName: cf-notification-sns-topic
+      Subscription:
+        - Endpoint: !GetAtt 
+            - CloudFormationFailureLambdaFunction
+            - Arn
+          Protocol: lambda
+  CFNotificationSNSTopicPolicy:
+    Type: 'AWS::SNS::TopicPolicy'
+    Condition: CreateCloudFormationFailureResources
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Id: Pid1
+        Statement:
+          - Sid: Sid1
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action:
+              - 'SNS:Publish'
+              - 'SNS:RemovePermission'
+              - 'SNS:SetTopicAttributes'
+              - 'SNS:DeleteTopic'
+              - 'SNS:ListSubscriptionsByTopic'
+              - 'SNS:GetTopicAttributes'
+              - 'SNS:Receive'
+              - 'SNS:AddPermission'
+              - 'SNS:Subscribe'
+            Resource: !Ref CFNotificationSNSTopic
+            Condition:
+              StringEquals:
+                'AWS:SourceOwner': !Ref 'AWS::AccountId'
+          - Sid: Sid2
+            Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action:
+              - 'SNS:Publish'
+            Resource: !Ref CFNotificationSNSTopic
+      Topics:
+        - !Ref CFNotificationSNSTopic
+  CloudFormationFailureLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Condition: CreateCloudFormationFailureResources
+    Properties:
+      FunctionName: !GetAtt 
+        - CloudFormationFailureLambdaFunction
+        - Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref CFNotificationSNSTopic
+  LambdaFailureCloudWatchAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Condition: CreateLambdaFailureResources
+    Properties:
+      AlarmName: lambda-function-failure-cloudwatch-alarm
+      AlarmDescription: >-
+        CloudWatch Alarm to Send Notification on SNS regarding Lambda Function
+        Failures.
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions: []
+      DatapointsToAlarm: 1
+      Statistic: Sum
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      Period: 60
+      EvaluationPeriods: 1
+      AlarmActions:
+        - !Ref FailureNotificationSNSTopic
+  DMSInstanceFailureEvent:
+    Type: 'AWS::DMS::EventSubscription'
+    Condition: CreateDMSFailureWarningResources
+    Properties:
+      SubscriptionName: dms-instance-failure-warning-event
+      EventCategories:
+        - failure
+        - low storage
+        - failover
+        - deletion
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: replication-instance
+      Tags:
+        - Key: Name
+          Value: dms-instance-failure-event
+  DMSTaskFailureEvent:
+    Type: 'AWS::DMS::EventSubscription'
+    Condition: CreateDMSFailureWarningResources
+    Properties:
+      SubscriptionName: dms-task-failure-event
+      EventCategories:
+        - failure
+        - deletion
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: replication-task
+      Tags:
+        - Key: Name
+          Value: dms-task-failure-event
+  RDSInstanceFailureEvent:
+    Type: 'AWS::RDS::EventSubscription'
+    Condition: CreateRDSFailureWarningResources
+    Properties:
+      EventCategories:
+        - failure
+        - low storage
+        - failover
+        - availability
+        - notification
+        - read replica
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: db-instance
+  RDSSecurityGroupFailureEvent:
+    Type: 'AWS::RDS::EventSubscription'
+    Condition: CreateRDSFailureWarningResources
+    Properties:
+      EventCategories:
+        - failure
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: db-security-group
+  RDSSnapshotFailureEvent:
+    Type: 'AWS::RDS::EventSubscription'
+    Condition: CreateRDSFailureWarningResources
+    Properties:
+      EventCategories:
+        - notification
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: db-snapshot
+  RDSClusterFailureEvent:
+    Type: 'AWS::RDS::EventSubscription'
+    Condition: CreateRDSFailureWarningResources
+    Properties:
+      EventCategories:
+        - failure
+        - failover
+        - notification
+      SnsTopicArn: !Ref FailureNotificationSNSTopic
+      SourceType: db-cluster
+  CBFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateCBFailureResources
+    Properties:
+      Name: cb-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        CodeBuild Failures.
+      EventPattern:
+        source:
+          - aws.codebuild
+        detail-type:
+          - CodeBuild Build State Change
+        detail:
+          build-status:
+            - FAILED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS CodeBuild"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EC2AutoScalingFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEC2AutoScalingFailureResources
+    Properties:
+      Name: ec2-autoscaling-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EC2
+        Auto Scaling Failures.
+      EventPattern:
+        source:
+          - aws.autoscaling
+        detail-type:
+          - EC2 Instance Launch Unsuccessful
+          - EC2 Instance Terminate Unsuccessful
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EC2 Auto Scaling"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  BatchFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateBatchFailureResources
+    Properties:
+      Name: batch-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS Batch
+        Failures.
+      EventPattern:
+        source:
+          - aws.batch
+        detail-type:
+          - Batch Job State Change
+        detail:
+          status:
+            - FAILED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Batch"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  CodeDeployFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateCodeDeployFailureResources
+    Properties:
+      Name: codedeploy-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        CodeDeploy Failures.
+      EventPattern:
+        source:
+          - aws.codedeploy
+        detail-type:
+          - CodeDeploy Deployment State-change Notification
+          - CodeDeploy Instance State-change Notification
+        detail:
+          state:
+            - FAILURE
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS CodeDeploy"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  CodePipelineFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateCodePipelineFailureResources
+    Properties:
+      Name: codepipeline-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        CodePipeline Failures.
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Pipeline Execution State Change
+        detail:
+          state:
+            - CANCELED
+            - FAILED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS CodePipeline"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ConfigFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateConfigFailureResources
+    Properties:
+      Name: config-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Config Failures.
+      EventPattern:
+        source:
+          - aws.config
+        detail-type:
+          - Config Configuration Snapshot Delivery Status
+        detail:
+          messageType:
+            - ConfigurationSnapshotDeliveryFailed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Config"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EBSFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEBSFailureResources
+    Properties:
+      Name: ebs-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EBS
+        Failures.
+      EventPattern:
+        source:
+          - aws.ec2
+        detail-type:
+          - EBS Snapshot Notification
+          - EBS Multi-Volume Snapshots Completion Status
+          - EBS Volume Notification
+        detail:
+          event:
+            - createSnapshot
+            - createSnapshots
+            - copySnapshot
+            - createVolume
+            - attachVolume
+            - modifyVolume
+            - reattachVolume
+          result:
+            - failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EBS"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  GlueFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateGlueFailureResources
+    Properties:
+      Name: glue-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS Glue
+        Failures.
+      EventPattern:
+        source:
+          - aws.glue
+        detail-type:
+          - Glue Crawler State Change
+          - Glue Job State Change
+        detail:
+          state:
+            - FAILED
+            - TIMEOUT
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Glue"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EMRFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEMRFailureResources
+    Properties:
+      Name: emr-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EMR
+        Failures.
+      EventPattern:
+        source:
+          - aws.emr
+        detail-type:
+          - EMR Instance Fleet State Change
+          - EMR Auto Scaling Policy State Change
+          - EMR Cluster State Change
+          - EMR Step Status Change
+        detail:
+          state:
+            - SUSPENDED
+            - FAILED
+            - TERMINATED
+            - TERMINATED_WITH_ERRORS
+            - CANCELLED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EMR"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EMRErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEMRErrorResources
+    Properties:
+      Name: emr-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EMR
+        Errors.
+      EventPattern:
+        source:
+          - aws.emr
+        detail-type:
+          - EMR Configuration Error
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EMR"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ECSInstanceTerminationCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateECSInstanceTerminationResources
+    Properties:
+      Name: ecs-instance-termination-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS ECS
+        Instance Terminations.
+      EventPattern:
+        source:
+          - aws.ecs
+        detail-type:
+          - ECS Container Instance State Change
+        detail:
+          status:
+            - STOPPED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS ECS"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: TERMINATION"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ECSTaskTerminationCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateECSTaskTerminationResources
+    Properties:
+      Name: ecs-task-termination-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS ECS
+        Task Terminations.
+      EventPattern:
+        source:
+          - aws.ecs
+        detail-type:
+          - ECS Container Instance State Change
+        detail:
+          status:
+            - STOPPED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS ECS"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: TERMINATION"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EC2InstanceTerminationCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEC2InstanceTerminationResources
+    Properties:
+      Name: ec2-instance-termination-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EC2
+        Instance Terminations.
+      EventPattern:
+        source:
+          - aws.ec2
+        detail-type:
+          - EC2 Instance State-change Notification
+        detail:
+          state:
+            - stopping
+            - shutting-down
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EC2"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: TERMINATION"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  EC2SpotInstanceErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateEC2SpotInstanceErrorResources
+    Properties:
+      Name: ec2-spot-instance-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS EC2
+        Spot Instance Errors.
+      EventPattern:
+        source:
+          - aws.ec2
+        detail-type:
+          - EC2 Spot Instance Interruption Warning
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS EC2"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  TrustedAdvisorErrorWarningCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateTrustedAdvisorErrorWarningResources
+    Properties:
+      Name: trusted-advisor-error-warning-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Trusted Advisor Errors and Warnings.
+      EventPattern:
+        source:
+          - aws.trustedadvisor
+        detail-type:
+          - Trusted Advisor Check Item Refresh Notification
+        detail:
+          status:
+            - ERROR
+            - WARN
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Trusted Advisor"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR or WARNING"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  HealthErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateHealthErrorResources
+    Properties:
+      Name: health-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Health Errors.
+      EventPattern:
+        source:
+          - aws.health
+        detail-type:
+          - AWS Health Event
+          - AWS Health Abuse Event
+        detail:
+          eventTypeCategory:
+            - issue
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Health"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SMSFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSMSFailureResources
+    Properties:
+      Name: sms-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS SMS
+        Failures.
+      EventPattern:
+        source:
+          - aws.sms
+        detail-type:
+          - Server Migration Job State Change
+        detail:
+          state:
+            - Failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Server Migration Service (SMS)"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  StepFunctionsFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateStepFunctionsFailureResources
+    Properties:
+      Name: step-functions-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS Step
+        Functions Failures.
+      EventPattern:
+        source:
+          - aws.states
+        detail-type:
+          - Step Functions Execution Status Change
+        detail:
+          status:
+            - ABORTED
+            - FAILED
+            - TIMED_OUT
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Step Functions"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SSMMaintainanceWindowFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSSMMaintainanceWindowFailureResources
+    Properties:
+      Name: ssm-maintainance-window-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS SSM
+        Maintainance Window Failures.
+      EventPattern:
+        source:
+          - aws.ssm
+        detail-type:
+          - Maintenance Window Execution State-change Notification
+          - Maintenance Window Task Execution State-change Notification
+          - Maintenance Window Task Target Invocation State-change Notification
+        detail:
+          status:
+            - CANCELLED
+            - FAILED
+            - TIMED_OUT
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SSM Maintainance Window"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SSMEC2FailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSSMEC2FailureResources
+    Properties:
+      Name: ssm-ec2-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS SSM
+        EC2 State Manager, Run Command and Automation Failures.
+      EventPattern:
+        source:
+          - aws.ssm
+        detail-type:
+          - EC2 State Manager Association State Change
+          - EC2 State Manager Instance Association State Change
+          - EC2 Command Status-change Notification
+          - EC2 Command Invocation Status-change Notification
+          - EC2 Automation Step Status-change Notification
+          - EC2 Automation Execution Status-change Notification
+        detail:
+          status:
+            - Failed
+            - Cancelled
+            - TimedOut
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SSM EC2"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SSMComplianceWarningCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSSMComplianceWarningResources
+    Properties:
+      Name: ssm-compliance-warning-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS SSM
+        Compliance Warnings.
+      EventPattern:
+        source:
+          - aws.ssm
+        detail-type:
+          - Configuration Compliance State Change
+        detail:
+          compliance-status:
+            - non_compliant
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SSM Compliance"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: WARNING"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  OpsWorksFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateOpsWorksFailureResources
+    Properties:
+      Name: opsworks-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        OpsWorks Failures.
+      EventPattern:
+        source:
+          - aws.opsworks
+        detail-type:
+          - OpsWorks Command State Change
+          - OpsWorks Instance State Change
+          - OpsWorks Deployment State Change
+        detail:
+          status:
+            - expired
+            - failed
+            - skipped
+            - connection_lost
+            - setup_failed
+            - shutting_down
+            - start_failed
+            - stop_failed
+            - stopped
+            - terminated
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS OpsWorks"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  OpsWorksErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateOpsWorksErrorResources
+    Properties:
+      Name: opsworks-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        OpsWorks Errors.
+      EventPattern:
+        source:
+          - aws.opsworks
+        detail-type:
+          - OpsWorks Alert
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS OpsWorks"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  KMSKeyExpirationWarningCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateKMSKeyExpirationWarningResources
+    Properties:
+      Name: kms-key-expiration-warning-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS KMS
+        Key Expiration Warnings.
+      EventPattern:
+        source:
+          - aws.kms
+        detail-type:
+          - KMS Imported Key Material Expiration
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS KMS"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: WARNING"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  MacieWarningCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateMacieWarningResources
+    Properties:
+      Name: macie-warning-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS Macie
+        Warnings.
+      EventPattern:
+        source:
+          - aws.macie
+        detail-type:
+          - Macie Alert
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Macie"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: WARNING"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  GameLiftFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateGameLiftFailureResources
+    Properties:
+      Name: gamelift-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        GameLift Failures.
+      EventPattern:
+        source:
+          - aws.gamelift
+        detail-type:
+          - GameLift Matchmaking Event
+        detail:
+          type:
+            - MatchmakingTimedOut
+            - MatchmakingCancelled
+            - MatchmakingFailed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS GameLift"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  TranscribeFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateTranscribeFailureResources
+    Properties:
+      Name: transcribe-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Transcribe Failures.
+      EventPattern:
+        source:
+          - aws.transcribe
+        detail-type:
+          - Transcribe Job State Change
+        detail:
+          TranscriptionJobStatus:
+            - FAILED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Transcribe"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SignerFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSignerFailureResources
+    Properties:
+      Name: signer-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Signer Failures.
+      EventPattern:
+        source:
+          - aws.signer
+        detail-type:
+          - Signer Job Status Change
+        detail:
+          status:
+            - Failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Signer"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  DataSyncErrorWarningCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateDataSyncErrorWarningResources
+    Properties:
+      Name: datasync-error-warning-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        DataSync Errors and Warnings.
+      EventPattern:
+        source:
+          - aws.datasync
+        detail-type:
+          - DataSync Task Execution State Change
+          - DataSync Task State Change
+          - DataSync Agent State Change
+        detail:
+          State:
+            - ERROR
+            - UNAVAILABLE
+            - OFFLINE
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS DataSync"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR or WARNING"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  IoTAnalyticsFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateIoTAnalyticsFailureResources
+    Properties:
+      Name: iot-analytics-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS IoT
+        Analytics Failures.
+      EventPattern:
+        source:
+          - aws.iotanalytics
+        detail-type:
+          - IoT Analytics Dataset Lifecycle Notification
+        detail:
+          state:
+            - CONTENT_DELIVERY_FAILED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS IoT Analytics"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  DataLifecycleManagerErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateDataLifecycleManagerErrorResources
+    Properties:
+      Name: data-lifecycle-manager-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS Data
+        Lifecycle Manager Errors.
+      EventPattern:
+        source:
+          - aws.dlm
+        detail-type:
+          - DLM Policy State Change
+        detail:
+          state:
+            - ERROR
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Data Lifecycle Manager"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ElementalMediaPackageErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateElementalMediaPackageErrorResources
+    Properties:
+      Name: elemental-mediapackage-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Elemental MediaPackage Errors.
+      EventPattern:
+        source:
+          - aws.mediapackage
+        detail-type:
+          - MediaPackage Input Notification
+          - MediaPackage Key Provider Notification
+        detail:
+          event:
+            - MaxIngestStreamsError
+            - IngestError
+            - KeyProviderError
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Elemental MediaPackage"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ElementalMediaLiveErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateElementalMediaLiveErrorResources
+    Properties:
+      Name: elemental-medialive-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Elemental MediaLive Errors.
+      EventPattern:
+        source:
+          - aws.medialive
+        detail-type:
+          - MediaLive Channel Alert
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Elemental MediaLive"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  ElementalMediaConvertErrorCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateElementalMediaConvertErrorResources
+    Properties:
+      Name: elemental-mediaconvert-error-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        Elemental MediaConvert Errors.
+      EventPattern:
+        source:
+          - aws.mediaconvert
+        detail-type:
+          - MediaConvert Job State Change
+        detail:
+          status:
+            - ERROR
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS Elemental MediaConvert"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: ERROR"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SageMakerHyperParameterTuningFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSageMakerHyperParameterTuningFailureResources
+    Properties:
+      Name: sagemaker-hyperparameter-tuning-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        SageMaker HyperParameter Tuning Failures.
+      EventPattern:
+        source:
+          - aws.sagemaker
+        detail-type:
+          - SageMaker HyperParameter Tuning Job State Change
+        detail:
+          HyperParameterTuningJobStatus:
+            - Failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SageMaker HyperParameter Tuning"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SageMakerTransformFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSageMakerTransformFailureResources
+    Properties:
+      Name: sagemaker-transform-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        SageMaker Transform Failures.
+      EventPattern:
+        source:
+          - aws.sagemaker
+        detail-type:
+          - SageMaker Transform Job State Change
+        detail:
+          TransformJobStatus:
+            - Failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SageMaker Transform"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"
+  SageMakerTrainingFailureCloudWatchEvent:
+    Type: 'AWS::Events::Rule'
+    Condition: CreateSageMakerTrainingFailureResources
+    Properties:
+      Name: sagemaker-training-failure-cloudwatch-event
+      Description: >-
+        AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS
+        SageMaker Training Failures.
+      EventPattern:
+        source:
+          - aws.sagemaker
+        detail-type:
+          - SageMaker Training Job State Change
+        detail:
+          TrainingJobStatus:
+            - Failed
+      State: ENABLED
+      Targets:
+        - Arn: !Ref FailureNotificationSNSTopic
+          Id: FailureNotificationSNSTopicTarget
+          InputTransformer:
+            InputPathsMap:
+              detail: $.detail
+              detail-type: $.detail-type
+              resources: $.resources
+              time: $.time
+              region: $.region
+              account: $.account
+            InputTemplate: |-
+              "AWS Event Account ID: <account>"
+              "AWS Event Region: <region>"
+              "AWS Event Time: <time>"
+              "AWS Event Service: AWS SageMaker Training"
+              "AWS Event Name: <detail-type>"
+              "AWS Event Type: FAILURE"
+              "AWS Event Resource(s): <resources>"
+              "AWS Event Details (minified json string): <detail>"

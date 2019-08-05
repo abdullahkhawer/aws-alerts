@@ -72,10 +72,10 @@ Following are the steps to successfully deploy and use this framework:
 -   Under **Choose a template**, either upload **aws_failure_error_warning_termination_notification_framework_cft.json** or **aws_failure_error_warning_termination_notification_framework_cft.yaml** from here or put it on AWS S3 bucket and enter AWS S3 URL for that file.
 -   Enter any suitable **Stack Name**.
 -   Enter **FailureErrorWarningTerminationNotificationSNSTopicEmail** which is the email address where you receive all notifications from AWS SNS topic. (e.g., abcxyz@gmail.com).
--   If you want to enable AWS CloudFormation failures notifications, select yes for **EnableCloudFormationFailureNotification** and then specify the following:
+-   If you want to enable AWS CloudFormation failures notifications, select **YES** for **EnableCloudFormationFailureNotification** and then specify the following:
     -   Enter **CloudFormationFailureLambdaCodeS3Bucket** which is an AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code. (e.g., my-bucket).
     -   Enter **CloudFormationFailureLambdaCodeS3Key** which is an AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code (e.g., lambda/code/aws_cloudformation_failure_notification.zip).
--   Similarly, for which ever AWS service you want to enable failures, errors, warnings and terminations notifications, select yes for that AWS service's parameter that is starting with **Enable...**
+-   Similarly, for which ever AWS service you want to enable failures, errors, warnings and terminations notifications, select **YES** for that AWS service's parameter that is starting with **Enable...**
 -   Enter suitable **Tags** if required.
 -   Under **Review**, select **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** and click create.
 -   Wait for the stack to change its **Status** to **CREATE_COMPLETE**.

@@ -80,9 +80,9 @@ Following are the steps to successfully deploy and use this framework:
 -   Under **Review**, select **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** and click create.
 -   Wait for the stack to change its **Status** to **CREATE_COMPLETE**.
 -   Confirm the subscription to the AWS SNS topic by either clicking on the URL received on the email address specified above during deployment or confirming the subscription from AWS SNS console.
+-   For AWS CloudFormation, refer the following AWS SNS topic that is created for the receival of all notifications and that is **cf-notification-sns-topic**.
+-   For AWS DataPipeline, AWS S3 for Object in RRS lost or any other failure, warning, error or termination notification that you want to send on your own, refer the following AWS SNS topic that is created for the receival of failures, errors, warnings and terminations notifications and that is **failure-error-warning-termination-notification-sns-topic**.
 -   Voila, you are done and everything is now up and running.
-
-*NOTE: For AWS CloudFormation, AWS DataPipeline, AWS S3 for Object in RRS lost, any other AWS service that is not covered and supports failures notifications or any other custom notification solution that you have built, refer the following AWS SNS topic that is created for the sole purpose of the receival of failures, errors, warnings and terminations notifications and that is **failure-error-warning-termination-notification-sns-topic**.*
 
 ## Troubleshooting Notes
 

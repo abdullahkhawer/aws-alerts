@@ -4,10 +4,13 @@ Description: >-
   Termination Notification Framework. You will be billed for the AWS resources
   used if you create a stack from this template.
 Parameters:
-  FailureErrorWarningTerminationNotificationSNSTopicEmail:
+  FailureErrorWarningTerminationNotificationSNSTopicEndpoint:
     Description: >-
-      Email Address for AWS Failure, Error, Warning and Termination Notification
-      SNS Topic.
+      Endpoint for AWS Failure, Error, Warning and Termination Notification SNS Topic.
+    Type: String
+  FailureErrorWarningTerminationNotificationSNSTopicProtocol:
+    Description: >-
+      Protocol for AWS Failure, Error, Warning and Termination Notification SNS Topic.
     Type: String
   EnableCloudFormationFailureNotification:
     Description: Option to Enable AWS CloudFormation Failure Notification.
@@ -481,8 +484,8 @@ Resources:
     Properties:
       TopicName: failure-error-warning-termination-notification-sns-topic
       Subscription:
-        - Endpoint: !Ref FailureErrorWarningTerminationNotificationSNSTopicEmail
-          Protocol: email
+        - Endpoint: !Ref FailureErrorWarningTerminationNotificationSNSTopicEndpoint
+          Protocol: !Ref FailureErrorWarningTerminationNotificationSNSTopicProtocol
   FailureNotificationSNSTopicPolicy:
     Type: 'AWS::SNS::TopicPolicy'
     Properties:
@@ -556,7 +559,7 @@ Resources:
     Properties:
       FunctionName: cf-failure-lambda-function
       Description: >-
-        Lambda Function based on Python 3.7 to Send Notification on SNS
+        Lambda Function based on Python 3.9 to Send Notification on SNS
         regarding CloudFormation Stacks Failures.
       Environment:
         Variables:
@@ -568,7 +571,7 @@ Resources:
       Role: !GetAtt 
         - CloudFormationFailureLambdaIAMRole
         - Arn
-      Runtime: python3.7
+      Runtime: python3.9
       Timeout: 60
       MemorySize: 128
       Tags:
@@ -1151,7 +1154,7 @@ Resources:
         source:
           - aws.ecs
         detail-type:
-          - ECS Container Instance State Change
+          - ECS Task State Change
         detail:
           status:
             - STOPPED

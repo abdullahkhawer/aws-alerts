@@ -2,8 +2,12 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "AWS CloudFormation Template to deploy the Failure, Error, Warning and Termination Notification Framework. You will be billed for the AWS resources used if you create a stack from this template.",
   "Parameters": {
-    "FailureErrorWarningTerminationNotificationSNSTopicEmail": {
-      "Description": "Email Address for AWS Failure, Error, Warning and Termination Notification SNS Topic.",
+    "FailureErrorWarningTerminationNotificationSNSTopicProtocol": {
+      "Description": "Protocol for AWS Failure, Error, Warning and Termination Notification SNS Topic.",
+      "Type": "String"
+    },
+    "FailureErrorWarningTerminationNotificationSNSTopicEndpoint": {
+      "Description": "Endpoint for AWS Failure, Error, Warning and Termination Notification SNS Topic.",
       "Type": "String"
     },
     "EnableCloudFormationFailureNotification": {
@@ -479,9 +483,11 @@
         "Subscription": [
           {
             "Endpoint": {
-              "Ref": "FailureErrorWarningTerminationNotificationSNSTopicEmail"
+              "Ref": "FailureErrorWarningTerminationNotificationSNSTopicEndpoint"
             },
-            "Protocol": "email"
+            "Protocol": {
+              "Ref": "FailureErrorWarningTerminationNotificationSNSTopicProtocol"
+            }
           }
         ]
       }
@@ -595,7 +601,7 @@
       "Condition": "CreateCloudFormationFailureResources",
       "Properties": {
         "FunctionName": "cf-failure-lambda-function",
-        "Description": "Lambda Function based on Python 3.7 to Send Notification on SNS regarding CloudFormation Stacks Failures.",
+        "Description": "Lambda Function based on Python 3.9 to Send Notification on SNS regarding CloudFormation Stacks Failures.",
         "Environment": {
           "Variables": {
             "FAILURE_SNS_TOPIC_ARN": {
@@ -615,7 +621,7 @@
         "Role": {
           "Fn::GetAtt": ["CloudFormationFailureLambdaIAMRole", "Arn"]
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 60,
         "MemorySize": 128,
         "Tags": [
@@ -1237,7 +1243,7 @@
         "Description": "AWS CloudWatch Event to Send Notification on AWS SNS regarding AWS ECS Task Terminations.",
         "EventPattern": {
           "source": ["aws.ecs"],
-          "detail-type": ["ECS Container Instance State Change"],
+          "detail-type": ["ECS Task State Change"],
           "detail": {
             "status": ["STOPPED"]
           }

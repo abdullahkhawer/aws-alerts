@@ -1,56 +1,66 @@
 # AWS Failure Error Warning Termination Notification Framework
 
 -   Founder: Abdullah Khawer (LinkedIn: https://www.linkedin.com/in/abdullah-khawer/)
--   Version: v1.0
+-   Version: v1.1.0
 
 ## Introduction
 
-AWS Failure Error Warning Termination Notification Framework is an AWS based failure, error, warning and termination notification solution for various services under one AWS CloudFormation stack using AWS CloudWatch events for failures, errors, warnings and terminations of resources of various AWS services, AWS CloudWatch alarm for AWS Lambda function failures, AWS Lambda Function using a Python script that is using Boto3 to publish AWS CloudFormation failures on AWS SNS topic and AWS DMS and AWS RDS event subscriptions for failures, errors and terminations.
+AWS Failure Error Warning Termination Notification Framework is a framework for AWS cloud to notify for failures, errors, warnings and terminations for various AWS services.
 
-Following are the AWS services for which you can enable failures, errors, warnings and terminations notifications:
--   **AWS Batch**
--   **AWS CloudFormation (CF)**
--   **AWS CodeBuild (CB)**
--   **AWS CodeDeploy (CD)**
--   **AWS CodePipeline (CP)**
--   **AWS Config**
--   **AWS Data Lifecycle Manager (DLM)**
--   **AWS DataSync (DS)**
--   **AWS Database Migration Service (DMS)**
--   **AWS Elastic Block Store (EBS)**
--   **AWS Elastic Compute Cloud (EC2) Auto Scaling**
--   **AWS Elastic Compute Cloud (EC2)**
--   **AWS Elastic Container Service (ECS)**
--   **AWS Elemental**
--   **AWS Elastic Map Reduce (EMR)**
--   **AWS GameLift (GL)**
--   **AWS Glue**
--   **AWS Health**
--   **AWS Internet of Things (IoT)**
--   **AWS Key Management Service (KMS)**
--   **AWS Lambda**
--   **AWS Macie**
--   **AWS OpsWorks**
--   **AWS Relation Database Service (RDS)**
--   **AWS SageMaker**
--   **AWS Signer**
--   **AWS Server Migration Service (SMS)**
--   **AWS Systems Manager (SSM)**
--   **AWS Step Functions (SF)**
--   **AWS Transcribe**
--   **AWS Trusted Advisor (TA)**
+You can update provided parameter values to enable or disable notification resources for different AWS services.
 
-You can even disable the created AWS CloudWatch events, AWS CloudWatch alarm, DMS and RDS subscriptions in a single click without deleting its AWS CloudFormation stack for different AWS services but that may create a stack drift. You can also update the stack to add or remove notification resources for different AWS services on the basis of the values of the stack parameters.
+By default, all AWS services are disabled and you have to choose which one to enable.
 
-AWS Lambda function used for AWS CloudFormation failures management is using Python 3.7 as its runtime environment.
+## Supported IaC (Infrastructure as Code) Tools:
+
+- Terraform
+- AWS CloudFormation
+
+## Supported AWS Services:
+
+Following are the AWS services for which you can enable notifications for failures, errors, warnings and terminations:
+
+-   `AWS Batch`
+-   `AWS CloudFormation (CF)`
+-   `AWS CodeBuild (CB)`
+-   `AWS CodeDeploy (CD)`
+-   `AWS CodePipeline (CP)`
+-   `AWS Config`
+-   `AWS Data Lifecycle Manager (DLM)`
+-   `AWS DataSync (DS)`
+-   `AWS Database Migration Service (DMS)`
+-   `AWS Elastic Block Store (EBS)`
+-   `AWS Elastic Compute Cloud (EC2) Auto Scaling`
+-   `AWS Elastic Compute Cloud (EC2)`
+-   `AWS Elastic Container Service (ECS)`
+-   `AWS Elemental`
+-   `AWS Elastic Map Reduce (EMR)`
+-   `AWS GameLift (GL)`
+-   `AWS Glue`
+-   `AWS Health`
+-   `AWS Internet of Things (IoT)`
+-   `AWS Key Management Service (KMS)`
+-   `AWS Lambda`
+-   `AWS Macie`
+-   `AWS OpsWorks`
+-   `AWS Relation Database Service (RDS)`
+-   `AWS SageMaker`
+-   `AWS Signer`
+-   `AWS Server Migration Service (SMS)`
+-   `AWS Systems Manager (SSM)`
+-   `AWS Step Functions (SF)`
+-   `AWS Transcribe`
+-   `AWS Trusted Advisor (TA)`
 
 ### Any contributions, improvements and suggestions will be highly appreciated.
 
 ## Components Used
 
 Following are the components used in this framework:
--   AWS CloudFormation template (both in JSON and YAML) for stack deployment.
--   Python script having the logic to manage AWS CloudFormation failures developed in Python 3.7.
+
+-   Terraform templates for all of the resources deployment in case you don't want to use AWS CloudFormation templates.
+-   AWS CloudFormation templates (both in JSON and YAML) for all of the resources deployment as stack in case you don't want to use Terraform templates.
+-   Python script having the logic to manage AWS CloudFormation failures developed in Python 3.9.
 -   Boto3 for AWS resources access in Python.
 -   AWS Lambda function to execute the above mentioned Python script.
 -   AWS IAM role used by the Lambda function with least privileges.
@@ -58,35 +68,48 @@ Following are the components used in this framework:
 -   AWS CloudWatch events for the failures, errors, warnings and terminations notifications of various AWS services triggered upon events.
 -   AWS CloudWatch alarm for the failures of AWS Lambda functions.
 -   AWS RDS and DMS event subscriptions for the failures, errors, warnings and terminations of AWS RDS and DMS resources respectively.
--   AWS SNS topic for receiving and sending notifications to an email based subscribed endpoint for AWS CloudFormation notifications.
--   AWS SNS topic for receiving and sending notifications to an email based subscribed endpoint for failures, errors, warnings and terminations notifications of various AWS services.
+-   AWS SNS topic for receiving and sending notifications to the subscribed endpoint for AWS CloudFormation notifications.
+-   AWS SNS topic for receiving and sending notifications to the subscribed endpoint for failures, errors, warnings and terminations notifications of various AWS services.
 -   AWS SNS topic policies for the above mentioned AWS SNS topics with sufficient permissions to allow publishing of messages on these AWS SNS topics.
 
 ## Deployment and Usage Notes
 
+### Using Terraform:
+
 Following are the steps to successfully deploy and use this framework:
--   Clone this repository from the master branch.
--   Compress **aws_cloudformation_failure_notification.py** file in zip format and put it on AWS S3 bucket.
+-   Fork this repository from the master branch.
+-   If you want to enable AWS CloudFormation failures notifications, change default value to `true` in the `variables.tf` file for `enable_cloudformation_failure_notification` parameter.
+-   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, change default value to `true` for that AWS service's parameter that is starting with `enable_...`
+-   Configure AWS CLI and then run `terraform init` and then `terraform apply` within the `/terraform` directory and provide protocol (e.g., `email` or `https`) and endpoint (e.g., `abcxyz@gmail.com`) by providing values for `failure_error_warning_termination_notification_sns_topic_protocol` and `failure_error_warning_termination_notification_sns_topic_endpoint` respectively.
+-   If the Terraform change plan looks good, enter `yes` to create the resources.
+-   Wait for the Terraform to finish creating all the resources.
+-   Confirm the subscription of the endpoint to the AWS SNS topic. The method depends on the protocol selected.
+
+### Using AWS CloudFormation:
+
+Following are the steps to successfully deploy and use this framework:
+-   Fork this repository from the master branch.
+-   Compress `/function/aws_cloudformation_failure_notification.py` file in zip format and put it on AWS S3 bucket.
 -   Login to AWS console with IAM user credentials having the required admin privileges to create resources via AWS CloudFormation.
--   Go to AWS CloudFormation and choose to **Create Stack**.
--   Under **Choose a template**, either upload **aws_failure_error_warning_termination_notification_framework_cft.json** or **aws_failure_error_warning_termination_notification_framework_cft.yaml** from here or put it on AWS S3 bucket and enter AWS S3 URL for that file.
--   Enter any suitable **Stack Name**.
--   Enter **FailureErrorWarningTerminationNotificationSNSTopicEmail** which is the email address where you receive all notifications from AWS SNS topic. (e.g., abcxyz@gmail.com).
--   If you want to enable AWS CloudFormation failures notifications, select **YES** for **EnableCloudFormationFailureNotification** and then specify the following:
-    -   Enter **CloudFormationFailureLambdaCodeS3Bucket** which is an AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code. (e.g., my-bucket).
-    -   Enter **CloudFormationFailureLambdaCodeS3Key** which is an AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code (e.g., lambda/code/aws_cloudformation_failure_notification.zip).
--   Similarly, for which ever AWS service you want to enable failures, errors, warnings and terminations notifications, select **YES** for that AWS service's parameter that is starting with **Enable...**
--   Enter suitable **Tags** if required.
--   Under **Review**, select **I acknowledge that AWS CloudFormation might create IAM resources with custom names.** and click create.
--   Wait for the stack to change its **Status** to **CREATE_COMPLETE**.
--   Confirm the subscription to the AWS SNS topic by either clicking on the URL received on the email address specified above during deployment or confirming the subscription from AWS SNS console.
--   For AWS CloudFormation, refer the following AWS SNS topic that is created for the receival of all notifications and that is **cf-notification-sns-topic**.
--   For AWS DataPipeline, AWS S3 for Object in RRS lost or any other failure, warning, error or termination notification that you want to send on your own, refer the following AWS SNS topic that is created for the receival of failures, errors, warnings and terminations notifications and that is **failure-error-warning-termination-notification-sns-topic**.
--   Voila, you are done and everything is now up and running.
+-   Go to AWS CloudFormation and choose to `Create Stack`.
+-   Under `Choose a template`, either upload `aws_failure_error_warning_termination_notification_framework_cft.json` or `aws_failure_error_warning_termination_notification_framework_cft.yaml` from here or put it on AWS S3 bucket and enter AWS S3 URL for that file.
+-   Enter any suitable `Stack Name`.
+-   Enter `FailureErrorWarningTerminationNotificationSNSTopicEndpoint` which is the endpoint where you receive all notifications from AWS SNS topic. (e.g., `abcxyz@gmail.com`).
+-   Enter `FailureErrorWarningTerminationNotificationSNSTopicProtocol` which is the protocol used by the endpoint where you receive all notifications from AWS SNS topic. (e.g., `email` or `https`).
+-   If you want to enable AWS CloudFormation failures notifications, select `YES` for `EnableCloudFormationFailureNotification` and then specify the following:
+    -   Enter `CloudFormationFailureLambdaCodeS3Bucket` which is an AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code. (e.g., my-bucket).
+    -   Enter `CloudFormationFailureLambdaCodeS3Key` which is an AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code (e.g., lambda/code/aws_cloudformation_failure_notification.zip).
+-   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, select `YES` for that AWS service's parameter that is starting with `Enable...`
+-   Enter suitable `Tags` if required.
+-   Under `Review`, select `I acknowledge that AWS CloudFormation might create IAM resources with custom names.` and click create.
+-   Wait for the stack to change its `Status` to `CREATE_COMPLETE`.
+-   Confirm the subscription of the endpoint to the AWS SNS topic. The method depends on the protocol selected.
+
+Voila, you are done and everything is now up and running.
 
 ## Troubleshooting Notes
 
--   If the email is not receiving email or the AWS CloudWatch alarm isn't working, try resubscribing to the AWS SNS topic or updating the notification action in AWS CloudWatch alarm.
--   If some other issue occurs, kindly create an issue on this GitHub repository for its resolution or any help assistance.
+-   In case of no notifications are received or the AWS CloudWatch alarm isn't working, try resubscribing to the AWS SNS topic or updating the notification action in AWS CloudWatch alarm.
+-   If some other issue occurs, kindly create an issue on this GitHub repository for its resolution or any help.
 
-### Warning: You will be billed for the AWS resources used if you create a stack for this framework.
+### Warning: You will be billed for the AWS resources created by this framework.

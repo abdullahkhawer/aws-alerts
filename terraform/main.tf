@@ -263,11 +263,64 @@ resource "aws_dms_event_subscription" "dms_task_failure_event" {
   }
 }
 
-resource "aws_redshift_event_subscription" "error_event" {
-  count         = var.enable_rds_failure_warning_notification ? 1 : 0
-  name          = "aws-redshift-event-subscription-error-event"
-  severity      = "ERROR"
-  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.id
+
+resource "aws_db_event_subscription" "db_instance_failure_warning_event" {
+  count       = var.enable_rds_failure_warning_notification ? 1 : 0
+  name        = "aws-rds-event-subscription-db-instance-failure-warning-event"
+  sns_topic   = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type = "db-instance"
+
+  event_categories = [
+    "low storage",
+    "failover",
+    "failure"
+  ]
+}
+
+resource "aws_db_event_subscription" "db_security_group_failure_warning_event" {
+  count       = var.enable_rds_failure_warning_notification ? 1 : 0
+  name        = "aws-rds-event-subscription-db-security-group-failure-warning-event"
+  sns_topic   = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type = "db-security-group"
+
+  event_categories = [
+    "failure"
+  ]
+}
+
+resource "aws_db_event_subscription" "db_cluster_failure_warning_event" {
+  count       = var.enable_rds_failure_warning_notification ? 1 : 0
+  name        = "aws-rds-event-subscription-db-cluster-failure-warning-event"
+  sns_topic   = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type = "db-cluster"
+
+  event_categories = [
+    "failover",
+    "failure",
+    "global-failover"
+  ]
+}
+
+resource "aws_db_event_subscription" "custom_engine_version_failure_warning_event" {
+  count       = var.enable_rds_failure_warning_notification ? 1 : 0
+  name        = "aws-rds-event-subscription-custom-engine-version-failure-warning-event"
+  sns_topic   = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type = "custom-engine-version"
+
+  event_categories = [
+    "failure"
+  ]
+}
+
+resource "aws_db_event_subscription" "blue_green_deployment_failure_warning_event" {
+  count       = var.enable_rds_failure_warning_notification ? 1 : 0
+  name        = "aws-rds-event-subscription-blue-green-deployment-failure-warning-event"
+  sns_topic   = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type = "blue-green-deployment"
+
+  event_categories = [
+    "failure"
+  ]
 }
 
 resource "aws_cloudwatch_event_rule" "cb_failure_cloud_watch_event" {

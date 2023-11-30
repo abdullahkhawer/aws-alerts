@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.1.2] - 2023-11-30
+
+[1.1.2]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.1.2
+
+### Bug Fixes
+
+- Update Terraform code to fix AWS RDS Notifications Resources.
+
+### Miscellaneous Tasks
+
+- Update .gitignore to filter out more unwanted files.
+- Update .gitignore to filter required .terraform files from the terraform folder.
+
 ## [1.1.1] - 2023-11-30
 
 [1.1.1]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.1.1

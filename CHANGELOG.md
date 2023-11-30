@@ -1,7 +1,19 @@
-# Changelog
+Need to install the following packages:
+git-cliff@1.4.0
+Ok to proceed? (y) # Changelog
 
 All notable changes to this project will be documented in this file.
 
+
+## [1.1.1] - 2023-11-30
+
+[1.1.1]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.1.1
+
+### Bug Fixes
+
+- Update main.tf to fix paths for code related to Python AWS Lambda function.
+- Remove libraries from requirements.txt which are not required anymore.
+- Create terraform-usage-example.tf as usage example for Terraform.
 
 ## [1.1.0] - 2023-09-12
 

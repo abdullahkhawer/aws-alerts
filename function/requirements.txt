@@ -1,4 +1,2 @@
-os
-time
 boto3
 botocore

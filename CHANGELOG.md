@@ -1,6 +1,4 @@
-Need to install the following packages:
-git-cliff@1.4.0
-Ok to proceed? (y) # Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 

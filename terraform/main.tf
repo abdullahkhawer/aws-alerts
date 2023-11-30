@@ -134,7 +134,7 @@ resource "null_resource" "local_package" {
   }
 
   provisioner "local-exec" {
-    command = "pip3 install -r ${path.module}/function/requirements.txt -t ${path.module}/function --no-cache-dir --upgrade"
+    command = "pip3 install -r ${path.module}/../function/requirements.txt -t ${path.module}/../function --no-cache-dir --upgrade"
   }
 }
 
@@ -142,9 +142,9 @@ data "archive_file" "lambda" {
   count            = var.enable_cloudformation_failure_notification ? 1 : 0
   depends_on       = [null_resource.local_package]
   type             = "zip"
-  source_dir       = "${path.module}/function/"
+  source_dir       = "${path.module}/../function/"
   output_file_mode = "0666"
-  output_path      = "${path.module}/code.zip"
+  output_path      = "${path.module}/../code.zip"
 }
 
 resource "aws_sns_topic" "cf_notification_sns_topic" {

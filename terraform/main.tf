@@ -1,5 +1,11 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_lambda_functions" "all" {}
+
+locals {
+  lambda_function_names = length(var.lambda_function_names) == 0 ? data.aws_lambda_functions.all.function_names : var.lambda_function_names
+}
+
 resource "aws_sns_topic" "failure_notification_sns_topic" {
   name = "failure-error-warning-termination-notification-sns-topic"
 }
@@ -217,52 +223,53 @@ resource "aws_lambda_permission" "cloudformation_failure_lambda_invoke_permissio
 }
 
 resource "aws_cloudwatch_metric_alarm" "lambda_failure_cloud_watch_alarm" {
-  count               = var.enable_lambda_failure_notification ? 1 : 0
-  alarm_name          = "lambda-function-failure-cloudwatch-alarm"
-  alarm_description   = "CloudWatch Alarm to Send Notification on SNS regarding Lambda Function Failures."
+  count = var.enable_lambda_failure_notification ? length(local.lambda_function_names) : 0
+
+  alarm_name          = "lambda-function-${local.lambda_function_names[count.index]}-failure-alarm"
+  alarm_description   = "CloudWatch Alarm to Send Notification on SNS regarding Lambda Failures for ${local.lambda_function_names[count.index]} Function."
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
-  datapoints_to_alarm = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  period              = "60"
   statistic           = "Sum"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = 0
-  period              = 60
-  evaluation_periods  = 1
+  threshold           = "1"
+  treat_missing_data  = "missing"
+
+  dimensions = {
+    FunctionName = local.lambda_function_names[count.index]
+  }
+
   alarm_actions = [
     aws_sns_topic.failure_notification_sns_topic.id
   ]
 }
 
 resource "aws_dms_event_subscription" "dms_instance_failure_event" {
-  count = var.enable_dms_failure_warning_notification ? 1 : 0
-  name  = "dms-instance-failure-warning-event"
+  count         = var.enable_dms_failure_warning_notification ? 1 : 0
+  name          = "dms-instance-failure-warning-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.id
+  source_type   = "replication-instance"
+
   event_categories = [
     "failure",
     "low storage",
     "failover",
     "deletion"
   ]
-  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.id
-  source_type   = "replication-instance"
-  tags = {
-    Name = "dms-instance-failure-event"
-  }
 }
 
 resource "aws_dms_event_subscription" "dms_task_failure_event" {
-  count = var.enable_dms_failure_warning_notification ? 1 : 0
-  name  = "dms-task-failure-event"
+  count         = var.enable_dms_failure_warning_notification ? 1 : 0
+  name          = "dms-task-failure-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.id
+  source_type   = "replication-task"
+
   event_categories = [
     "failure",
     "deletion"
   ]
-  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.id
-  source_type   = "replication-task"
-  tags = {
-    Name = "dms-task-failure-event"
-  }
 }
-
 
 resource "aws_db_event_subscription" "db_instance_failure_warning_event" {
   count       = var.enable_rds_failure_warning_notification ? 1 : 0
@@ -321,6 +328,46 @@ resource "aws_db_event_subscription" "blue_green_deployment_failure_warning_even
   event_categories = [
     "failure"
   ]
+}
+
+resource "aws_redshift_event_subscription" "cluster_error_event" {
+  count         = var.enable_redshift_error_notification ? 1 : 0
+  name          = "aws-redshift-event-subscription-cluster-error-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type   = "cluster"
+  severity      = "ERROR"
+}
+
+resource "aws_redshift_event_subscription" "cluster_parameter_group_error_event" {
+  count         = var.enable_redshift_error_notification ? 1 : 0
+  name          = "aws-redshift-event-subscription-cluster-parameter-group-error-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type   = "cluster-parameter-group"
+  severity      = "ERROR"
+}
+
+resource "aws_redshift_event_subscription" "cluster_security_group_error_event" {
+  count         = var.enable_redshift_error_notification ? 1 : 0
+  name          = "aws-redshift-event-subscription-cluster-security-group-error-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type   = "cluster-security-group"
+  severity      = "ERROR"
+}
+
+resource "aws_redshift_event_subscription" "cluster_snapshot_error_event" {
+  count         = var.enable_redshift_error_notification ? 1 : 0
+  name          = "aws-redshift-event-subscription-cluster-snapshot-error-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type   = "cluster-snapshot"
+  severity      = "ERROR"
+}
+
+resource "aws_redshift_event_subscription" "scheduled_action_error_event" {
+  count         = var.enable_redshift_error_notification ? 1 : 0
+  name          = "aws-redshift-event-subscription-scheduled-action-error-event"
+  sns_topic_arn = aws_sns_topic.failure_notification_sns_topic.arn
+  source_type   = "scheduled-action"
+  severity      = "ERROR"
 }
 
 resource "aws_cloudwatch_event_rule" "cb_failure_cloud_watch_event" {

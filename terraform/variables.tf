@@ -20,6 +20,12 @@ variable "enable_lambda_failure_notification" {
   default     = false
 }
 
+variable "lambda_function_names" {
+  description = "List of AWS Lambda function names to monitor for failures."
+  type        = list(string)
+  default     = []
+}
+
 variable "enable_dms_failure_warning_notification" {
   description = "Option to Enable AWS DMS Failure and Warning Notification."
   type        = string
@@ -28,6 +34,12 @@ variable "enable_dms_failure_warning_notification" {
 
 variable "enable_rds_failure_warning_notification" {
   description = "Option to Enable AWS RDS Failure and Warning Notification."
+  type        = string
+  default     = false
+}
+
+variable "enable_redshift_error_notification" {
+  description = "Option to Enable AWS Redshift Error Notification."
   type        = string
   default     = false
 }

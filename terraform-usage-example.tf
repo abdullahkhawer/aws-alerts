@@ -3,6 +3,12 @@ module "aws-failure-error-warning-termination-notification-framework" {
   failure_error_warning_termination_notification_sns_topic_protocol = "email"
   failure_error_warning_termination_notification_sns_topic_endpoint = "abc.xyz@gmail.com"
 
+  # Following is an optional variable.
+  # It is used to provide a list of AWS Lambda function names to monitor for failures.
+  # If not provided, it will fetch all AWS Lambda function names.
+  # Only works if enable_lambda_failure_notification variable is set to true.
+  # e.g., lambda_function_names = ["function-1", "function-2"]
+
   # Enabled
   enable_cloudformation_failure_notification          = true
   enable_lambda_failure_notification                  = true
@@ -20,6 +26,7 @@ module "aws-failure-error-warning-termination-notification-framework" {
 
   # Not Enabled
   enable_dms_failure_warning_notification                       = false
+  enable_redshift_error_notification                            = false
   enable_code_build_failure_notification                        = false
   enable_batch_failure_notification                             = false
   enable_code_deploy_failure_notification                       = false

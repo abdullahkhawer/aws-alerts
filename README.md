@@ -5,9 +5,9 @@
 
 ## Introduction
 
-AWS Failure Error Warning Termination Notification Framework is a framework for AWS cloud to notify for failures, errors, warnings and terminations for various AWS services.
+AWS Failure Error Warning Termination Notification Framework is a framework for AWS cloud to monitor resources for various AWS services and alert for failures, errors, warnings and terminations.
 
-You can update provided parameter values to enable or disable notification resources for different AWS services.
+You can update provided variable values to enable or disable notification resources for different AWS services.
 
 By default, all AWS services are disabled and you have to choose which one to enable.
 
@@ -27,14 +27,14 @@ Following are the AWS services for which you can enable notifications for failur
 -   `AWS CodePipeline (CP)`
 -   `AWS Config`
 -   `AWS Data Lifecycle Manager (DLM)`
--   `AWS DataSync (DS)`
 -   `AWS Database Migration Service (DMS)`
+-   `AWS DataSync (DS)`
 -   `AWS Elastic Block Store (EBS)`
 -   `AWS Elastic Compute Cloud (EC2) Auto Scaling`
 -   `AWS Elastic Compute Cloud (EC2)`
 -   `AWS Elastic Container Service (ECS)`
--   `AWS Elemental`
 -   `AWS Elastic Map Reduce (EMR)`
+-   `AWS Elemental`
 -   `AWS GameLift (GL)`
 -   `AWS Glue`
 -   `AWS Health`
@@ -43,12 +43,13 @@ Following are the AWS services for which you can enable notifications for failur
 -   `AWS Lambda`
 -   `AWS Macie`
 -   `AWS OpsWorks`
+-   `AWS Redshift`
 -   `AWS Relation Database Service (RDS)`
 -   `AWS SageMaker`
--   `AWS Signer`
 -   `AWS Server Migration Service (SMS)`
--   `AWS Systems Manager (SSM)`
+-   `AWS Signer`
 -   `AWS Step Functions (SF)`
+-   `AWS Systems Manager (SSM)`
 -   `AWS Transcribe`
 -   `AWS Trusted Advisor (TA)`
 
@@ -66,7 +67,7 @@ Following are the components used in this framework:
 -   AWS IAM role used by the Lambda function with least privileges.
 -   AWS Lambda Invoke Permission for AWS SNS topic.
 -   AWS CloudWatch events for the failures, errors, warnings and terminations notifications of various AWS services triggered upon events.
--   AWS CloudWatch alarm for the failures of AWS Lambda functions.
+-   AWS CloudWatch alarms for the failures of AWS Lambda functions.
 -   AWS RDS and DMS event subscriptions for the failures, errors, warnings and terminations of AWS RDS and DMS resources respectively.
 -   AWS SNS topic for receiving and sending notifications to the subscribed endpoint for AWS CloudFormation notifications.
 -   AWS SNS topic for receiving and sending notifications to the subscribed endpoint for failures, errors, warnings and terminations notifications of various AWS services.
@@ -78,8 +79,9 @@ Following are the components used in this framework:
 
 Following are the steps to successfully deploy and use this framework:
 -   Fork this repository from the master branch.
--   If you want to enable AWS CloudFormation failures notifications, change default value to `true` in the `variables.tf` file for `enable_cloudformation_failure_notification` parameter.
--   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, change default value to `true` for that AWS service's parameter that is starting with `enable_...`
+-   If you want to enable AWS CloudFormation failures notifications, change default value to `true` for `enable_cloudformation_failure_notification` variable.
+-   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, change default value to `true` for that AWS service's variable that is starting with `enable_...`
+-   If `enable_lambda_failure_notification` variable is set to to `true` for AWS Lambda functions failure notifications, you can set a list of specific AWS Lambda functions to enable monitoring only for those using `lambda_function_names` variable. Otherwise, it will fetch all AWS Lambda function names.
 -   Configure AWS CLI and then run `terraform init` and then `terraform apply` within the `/terraform` directory and provide protocol (e.g., `email` or `https`) and endpoint (e.g., `abcxyz@gmail.com`) by providing values for `failure_error_warning_termination_notification_sns_topic_protocol` and `failure_error_warning_termination_notification_sns_topic_endpoint` respectively.
 -   If the Terraform change plan looks good, enter `yes` to create the resources.
 -   Wait for the Terraform to finish creating all the resources.
@@ -99,7 +101,7 @@ Following are the steps to successfully deploy and use this framework:
 -   If you want to enable AWS CloudFormation failures notifications, select `YES` for `EnableCloudFormationFailureNotification` and then specify the following:
     -   Enter `CloudFormationFailureLambdaCodeS3Bucket` which is an AWS S3 Bucket Name having AWS CloudFormation Failure Notification AWS Lambda Function Code. (e.g., my-bucket).
     -   Enter `CloudFormationFailureLambdaCodeS3Key` which is an AWS S3 Bucket Key having AWS CloudFormation Failure Notification AWS Lambda Function Code (e.g., lambda/code/aws_cloudformation_failure_notification.zip).
--   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, select `YES` for that AWS service's parameter that is starting with `Enable...`
+-   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, select `YES` for that AWS service's variable that is starting with `Enable...`
 -   Enter suitable `Tags` if required.
 -   Under `Review`, select `I acknowledge that AWS CloudFormation might create IAM resources with custom names.` and click create.
 -   Wait for the stack to change its `Status` to `CREATE_COMPLETE`.

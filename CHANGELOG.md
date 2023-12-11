@@ -3,18 +3,25 @@
 All notable changes to this project will be documented in this file.
 
 
-## [1.1.2] - 2023-11-30
+## [1.2.0] - 2023-12-11
 
-[1.1.2]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.1.2
+[1.2.0]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.2.0
 
 ### Bug Fixes
 
 - Update Terraform code to fix AWS RDS Notifications Resources.
 
+### Features
+
+- Add AWS Redshift monitoring for errors and add the capability to create AWS CloudWatch alarms for all or specific AWS Lambda functions for failures
+- Add AWS Redshift monitoring for errors and refactor the code
+
 ### Miscellaneous Tasks
 
 - Update .gitignore to filter out more unwanted files.
 - Update .gitignore to filter required .terraform files from the terraform folder.
+- Update usage example for Terraform to accomodate for new changes related to monitoring and alerting of AWS Redshift and AWS Lambda.
+- Update README.md w.r.t new changes related to monitoring and alerting of AWS Redshift and AWS Lambda.
 
 ## [1.1.1] - 2023-11-30
 

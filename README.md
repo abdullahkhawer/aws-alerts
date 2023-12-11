@@ -1,7 +1,6 @@
 # AWS Failure Error Warning Termination Notification Framework
 
 -   Founder: Abdullah Khawer (LinkedIn: https://www.linkedin.com/in/abdullah-khawer/)
--   Version: v1.1.0
 
 ## Introduction
 

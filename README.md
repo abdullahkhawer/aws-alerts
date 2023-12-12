@@ -11,6 +11,7 @@ You can update provided variable values to enable or disable notification resour
 By default, all AWS services are disabled and you have to choose which one to enable.
 
 ❓ Why did I develop this framework?
+
 👉🏻 Because sometimes some infrastructure level alerts can be missed which can be collected more efficiently using AWS CloudWatch events (AWS EventBridge), AWS CloudWatch alarms and AWS service specific event subscriptions.
 
 ## Supported IaC (Infrastructure as Code) Tools:

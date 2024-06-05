@@ -1,16 +1,16 @@
-# AWS Failure Error Warning Termination Notification Framework
+# AWS Alerts
 
 -   Founder: Abdullah Khawer (LinkedIn: https://www.linkedin.com/in/abdullah-khawer/)
 
 ## Introduction
 
-AWS Failure Error Warning Termination Notification Framework is a framework for AWS cloud to monitor resources for various AWS services and alert for failures, errors, warnings and terminations.
+AWS Alerts is a solution for AWS cloud to monitor resources for various AWS services and alert for failures, errors, warnings and terminations.
 
 You can update provided variable values to enable or disable notification resources for different AWS services.
 
 By default, all AWS services are disabled and you have to choose which one to enable.
 
-❓ Why did I develop this framework?
+❓ Why did I develop this solution?
 
 👉🏻 Because sometimes some infrastructure level alerts can be missed which can be collected more efficiently using AWS CloudWatch events (AWS EventBridge), AWS CloudWatch alarms and AWS service specific event subscriptions.
 
@@ -60,7 +60,7 @@ Following are the AWS services for which you can enable notifications for failur
 
 ## Components Used
 
-Following are the components used in this framework:
+Following are the components used in this solution:
 
 -   Terraform templates for all of the resources deployment in case you don't want to use AWS CloudFormation templates.
 -   AWS CloudFormation templates (both in JSON and YAML) for all of the resources deployment as stack in case you don't want to use Terraform templates.
@@ -80,7 +80,7 @@ Following are the components used in this framework:
 
 ### Using Terraform:
 
-Following are the steps to successfully deploy and use this framework:
+Following are the steps to successfully deploy and use this solution:
 -   Fork this repository from the master branch.
 -   If you want to enable AWS CloudFormation failures notifications, change default value to `true` for `enable_cloudformation_failure_notification` variable.
 -   Similarly, for any AWS service you want to enable failures, errors, warnings and terminations notifications, change default value to `true` for that AWS service's variable that is starting with `enable_...`
@@ -92,7 +92,7 @@ Following are the steps to successfully deploy and use this framework:
 
 ### Using AWS CloudFormation:
 
-Following are the steps to successfully deploy and use this framework:
+Following are the steps to successfully deploy and use this solution:
 -   Fork this repository from the master branch.
 -   Compress `/function/aws_cloudformation_failure_notification.py` file in zip format and put it on AWS S3 bucket.
 -   Login to AWS console with IAM user credentials having the required admin privileges to create resources via AWS CloudFormation.
@@ -117,4 +117,4 @@ Voila, you are done and everything is now up and running.
 -   In case of no notifications are received or the AWS CloudWatch alarm isn't working, try resubscribing to the AWS SNS topic or updating the notification action in AWS CloudWatch alarm.
 -   If some other issue occurs, kindly create an issue on this GitHub repository for its resolution or any help.
 
-### Warning: You will be billed for the AWS resources created by this framework.
+### Warning: You will be billed for the AWS resources created by this solution.

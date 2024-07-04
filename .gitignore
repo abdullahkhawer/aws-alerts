@@ -9,3 +9,4 @@ tf-plan*
 function/*
 !function/aws_alerts_lambda_function.py
 !function/requirements.txt
+code.zip

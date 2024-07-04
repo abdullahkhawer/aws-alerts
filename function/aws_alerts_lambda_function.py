@@ -33,6 +33,13 @@ def lambda_handler(event, context):
     event_subject = str(event['Records'][0]['Sns']['Subject'])
     event_message = str(event['Records'][0]['Sns']['Message'])
     event_message_json = json.loads(event_message)
+    if event_subject == "None":
+        if 'name' in event_message_json and 'region' in event_message_json:
+            event_name = str(event_message_json['name'])
+            event_region = str(event_message_json['region'])
+            event_subject = f"EVENT: '{event_name}' in {event_region}"
+        else:
+            event_subject = "EVENT"
     keys_to_remove = [
         'AlarmActions',
         'AlarmConfigurationUpdatedTimestamp',
@@ -62,9 +69,13 @@ def lambda_handler(event, context):
                 event_message_json['Trigger'].pop(key, None)
     keys_to_remove_from_details = [
         'ActivityId',
+        'additional-information',
+        'current-phase-context',
+        'current-phase',
         'EndTime',
         'RequestId',
-        'StartTime'
+        'StartTime',
+        'version'
     ]
     if 'details' in event_message_json and isinstance(event_message_json['details'], dict):
         for key in keys_to_remove_from_details:

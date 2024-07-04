@@ -3,10 +3,9 @@
 .terraform
 terraform/.terraform*
 terraform.tfstate.d
-code.zip
 .env
 .idea
 tf-plan*
 function/*
-!function/aws_cloudformation_failure_notification.py
+!function/aws_alerts_lambda_function.py
 !function/requirements.txt

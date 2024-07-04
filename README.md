@@ -14,6 +14,13 @@ By default, all AWS services are disabled and you have to choose which one to en
 
 Because sometimes infrastructure level alerts can be missed which can be collected more efficiently using AWS CloudWatch events (AWS EventBridge), AWS CloudWatch alarms and AWS service specific event subscriptions but manually creating all the required resources to enable all those alerts can take a lot of time and effort.
 
+Below you can find examples of AWS Alerts on Slack as notifications:
+- AWS CloudWatch Event
+<img width="482" alt="Screenshot Sample 1" src="https://github.com/abdullahkhawer/aws-alerts/assets/27900716/b5c6e43d-a465-4148-8011-5aa0addd83b6">
+
+- AWS CloudWatch Alarm
+<img width="542" alt="Screenshot Sample 2" src="https://github.com/abdullahkhawer/aws-alerts/assets/27900716/db4cb466-261f-48e3-b2ec-078d92639968">
+
 ## Supported IaC (Infrastructure as Code) Tools:
 
 - Terraform

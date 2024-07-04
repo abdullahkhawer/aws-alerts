@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Update usage example for Terraform to accomodate for new changes related to monitoring and alerting of AWS Redshift and AWS Lambda.
 - Update README.md w.r.t new changes related to monitoring and alerting of AWS Redshift and AWS Lambda.
 
+
 ## [1.1.1] - 2023-11-30
 
 [1.1.1]: https://github.com/abdullahkhawer/aws-failure-error-warning-termination-notification-framework/releases/tag/v1.1.1
@@ -32,6 +33,7 @@ All notable changes to this project will be documented in this file.
 - Update main.tf to fix paths for code related to Python AWS Lambda function.
 - Remove libraries from requirements.txt which are not required anymore.
 - Create terraform-usage-example.tf as usage example for Terraform.
+
 
 ## [1.1.0] - 2023-09-12
 

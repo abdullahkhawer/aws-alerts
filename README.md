@@ -4,7 +4,7 @@
 
 ## Introduction
 
-AWS Alerts is a solution for AWS cloud to monitor resources for various 30+ AWS services and send alerts for failures, errors, warnings and terminations on Slack.
+AWS Alerts is a monitoring and alerting solution for AWS cloud to monitor resources for 30+ AWS services and send alerts related to failures, errors, warnings and terminations on Slack.
 
 You can update provided variable values to enable or disable alerts for different AWS services.
 

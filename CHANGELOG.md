@@ -2,11 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2024-07-04
+
+### 🐛 Bug Fixes
+
+- Update AWS Lambda function's Python script to set the right event subject in case of AWS CloudWatch event and drop a few more unwanted keys from 'details' key in the JSON object.
+
+### ⚙️ Miscellaneous Tasks
+
+- Update README.md to add examples of AWS Alerts on Slack as notifications
+- Add 'code.zip' in .gitignore
+
 ## [2.0.0] - 2024-07-04
 
 ### 🚀 Features
 
 - [**breaking**] Update code to use AWS Lambda function to send alerts on Slack to improve alert message formatting, change the solution name to aws-alerts, do some code refactoring and update README.md accordingly.
+
+### ⚙️ Miscellaneous Tasks
+
+- *(release)* Prepare Release for v2.0.0.
 
 ## [1.2.0] - 2023-12-11
 

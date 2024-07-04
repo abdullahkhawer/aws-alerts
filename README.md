@@ -12,10 +12,10 @@ By default, all AWS services are disabled and you have to choose which one to en
 
 ❓ Why did I develop this solution?
 
-Because sometimes infrastructure level alerts can be missed which can be collected more efficiently using AWS CloudWatch events (AWS EventBridge), AWS CloudWatch alarms and AWS service specific event subscriptions but manually creating all the required resources to enable all those alerts can take a lot of time and effort.
+Because sometimes infrastructure level alerts can be missed which can be collected more efficiently using AWS CloudWatch/AWS EventBridge events, AWS CloudWatch alarms and AWS service specific event subscriptions but manually creating all the required resources to enable all those alerts can take a lot of time and effort.
 
 Below you can find examples of AWS Alerts on Slack as notifications:
-- AWS CloudWatch Event
+- AWS CloudWatch/AWS EventBridge Event
 <img width="482" alt="Screenshot Sample 1" src="https://github.com/abdullahkhawer/aws-alerts/assets/27900716/b5c6e43d-a465-4148-8011-5aa0addd83b6">
 
 - AWS CloudWatch Alarm
@@ -73,7 +73,7 @@ Following are the components used in this solution:
 -   AWS Lambda function to execute the above mentioned Python script.
 -   AWS IAM role used by the Lambda function with least privileges.
 -   AWS Lambda Invoke Permission for AWS SNS topic.
--   AWS CloudWatch events for the failures, errors, warnings and terminations alerts of various AWS services triggered upon events.
+-   AWS CloudWatch/AWS EventBridge events for the failures, errors, warnings and terminations alerts of various AWS services triggered upon events.
 -   AWS CloudWatch alarms for the failures of AWS Lambda functions.
 -   AWS RDS and DMS event subscriptions for the failures, errors, warnings and terminations of AWS RDS and DMS resources respectively.
 -   AWS SNS topic for receiving and sending alerts to Slack for failures, errors, warnings and terminations alerts of various AWS services.

@@ -751,10 +751,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateCBFailureResources
     Properties:
-      Name: cb-failure-cloudwatch-event
+      Name: aws-alerts-codebuild-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        CodeBuild Failures.
+        CodeBuild failures.
       EventPattern:
         source:
           - aws.codebuild
@@ -790,10 +790,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEC2AutoScalingFailureResources
     Properties:
-      Name: ec2-autoscaling-failure-cloudwatch-event
+      Name: aws-alerts-ec2-autoscaling-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2
-        Auto Scaling Failures.
+        Auto Scaling failures.
       EventPattern:
         source:
           - aws.autoscaling
@@ -827,10 +827,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateBatchFailureResources
     Properties:
-      Name: batch-failure-cloudwatch-event
+      Name: aws-alerts-batch-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Batch
-        Failures.
+        failures.
       EventPattern:
         source:
           - aws.batch
@@ -866,10 +866,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateCodeDeployFailureResources
     Properties:
-      Name: codedeploy-failure-cloudwatch-event
+      Name: aws-alerts-codedeploy-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        CodeDeploy Failures.
+        CodeDeploy failures.
       EventPattern:
         source:
           - aws.codedeploy
@@ -906,10 +906,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateCodePipelineFailureResources
     Properties:
-      Name: codepipeline-failure-cloudwatch-event
+      Name: aws-alerts-codepipeline-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        CodePipeline Failures.
+        CodePipeline failures.
       EventPattern:
         source:
           - aws.codepipeline
@@ -946,10 +946,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateConfigFailureResources
     Properties:
-      Name: config-failure-cloudwatch-event
+      Name: aws-alerts-config-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        Config Failures.
+        Config failures.
       EventPattern:
         source:
           - aws.config
@@ -985,10 +985,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEBSFailureResources
     Properties:
-      Name: ebs-failure-cloudwatch-event
+      Name: aws-alerts-ebs-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EBS
-        Failures.
+        failures.
       EventPattern:
         source:
           - aws.ec2
@@ -1034,10 +1034,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateGlueFailureResources
     Properties:
-      Name: glue-failure-cloudwatch-event
+      Name: aws-alerts-glue-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Glue
-        Failures.
+        failures.
       EventPattern:
         source:
           - aws.glue
@@ -1075,10 +1075,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEMRFailureResources
     Properties:
-      Name: emr-failure-cloudwatch-event
+      Name: aws-alerts-emr-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EMR
-        Failures.
+        failures.
       EventPattern:
         source:
           - aws.emr
@@ -1121,7 +1121,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEMRErrorResources
     Properties:
-      Name: emr-error-cloudwatch-event
+      Name: aws-alerts-emr-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EMR
         Errors.
@@ -1157,7 +1157,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateECSInstanceTerminationResources
     Properties:
-      Name: ecs-instance-termination-cloudwatch-event
+      Name: aws-alerts-ecs-instance-termination-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS ECS
         Instance Terminations.
@@ -1196,7 +1196,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateECSTaskTerminationResources
     Properties:
-      Name: ecs-task-termination-cloudwatch-event
+      Name: aws-alerts-ecs-task-termination-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS ECS
         Task Terminations.
@@ -1235,7 +1235,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEC2InstanceTerminationResources
     Properties:
-      Name: ec2-instance-termination-cloudwatch-event
+      Name: aws-alerts-ec2-instance-termination-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2
         Instance Terminations.
@@ -1275,7 +1275,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateEC2SpotInstanceErrorResources
     Properties:
-      Name: ec2-spot-instance-error-cloudwatch-event
+      Name: aws-alerts-ec2-spot-instance-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2
         Spot Instance Errors.
@@ -1311,7 +1311,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateTrustedAdvisorErrorWarningResources
     Properties:
-      Name: trusted-advisor-error-warning-cloudwatch-event
+      Name: aws-alerts-trusted-advisor-error-warning-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         Trusted Advisor Errors and Warnings.
@@ -1351,7 +1351,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateHealthErrorResources
     Properties:
-      Name: health-error-cloudwatch-event
+      Name: aws-alerts-health-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         Health Errors.
@@ -1391,10 +1391,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSMSFailureResources
     Properties:
-      Name: sms-failure-cloudwatch-event
+      Name: aws-alerts-sms-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SMS
-        Failures.
+        failures.
       EventPattern:
         source:
           - aws.sms
@@ -1430,10 +1430,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateStepFunctionsFailureResources
     Properties:
-      Name: step-functions-failure-cloudwatch-event
+      Name: aws-alerts-step-functions-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Step
-        Functions Failures.
+        Functions failures.
       EventPattern:
         source:
           - aws.states
@@ -1471,10 +1471,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSSMMaintainanceWindowFailureResources
     Properties:
-      Name: ssm-maintainance-window-failure-cloudwatch-event
+      Name: aws-alerts-ssm-maintainance-window-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM
-        Maintainance Window Failures.
+        Maintainance Window failures.
       EventPattern:
         source:
           - aws.ssm
@@ -1514,10 +1514,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSSMEC2FailureResources
     Properties:
-      Name: ssm-ec2-failure-cloudwatch-event
+      Name: aws-alerts-ssm-ec2-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM
-        EC2 State Manager, Run Command and Automation Failures.
+        EC2 State Manager, Run Command and Automation failures.
       EventPattern:
         source:
           - aws.ssm
@@ -1560,7 +1560,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSSMComplianceWarningResources
     Properties:
-      Name: ssm-compliance-warning-cloudwatch-event
+      Name: aws-alerts-ssm-compliance-warning-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM
         Compliance Warnings.
@@ -1599,10 +1599,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateOpsWorksFailureResources
     Properties:
-      Name: opsworks-failure-cloudwatch-event
+      Name: aws-alerts-opsworks-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        OpsWorks Failures.
+        OpsWorks failures.
       EventPattern:
         source:
           - aws.opsworks
@@ -1649,7 +1649,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateOpsWorksErrorResources
     Properties:
-      Name: opsworks-error-cloudwatch-event
+      Name: aws-alerts-opsworks-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         OpsWorks Errors.
@@ -1685,7 +1685,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateKMSKeyExpirationWarningResources
     Properties:
-      Name: kms-key-expiration-warning-cloudwatch-event
+      Name: aws-alerts-kms-key-expiration-warning-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS KMS
         Key Expiration Warnings.
@@ -1721,7 +1721,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateMacieWarningResources
     Properties:
-      Name: macie-warning-cloudwatch-event
+      Name: aws-alerts-macie-warning-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Macie
         Warnings.
@@ -1757,10 +1757,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateGameLiftFailureResources
     Properties:
-      Name: gamelift-failure-cloudwatch-event
+      Name: aws-alerts-gamelift-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        GameLift Failures.
+        GameLift failures.
       EventPattern:
         source:
           - aws.gamelift
@@ -1798,10 +1798,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateTranscribeFailureResources
     Properties:
-      Name: transcribe-failure-cloudwatch-event
+      Name: aws-alerts-transcribe-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        Transcribe Failures.
+        Transcribe failures.
       EventPattern:
         source:
           - aws.transcribe
@@ -1837,10 +1837,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSignerFailureResources
     Properties:
-      Name: signer-failure-cloudwatch-event
+      Name: aws-alerts-signer-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        Signer Failures.
+        Signer failures.
       EventPattern:
         source:
           - aws.signer
@@ -1876,7 +1876,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateDataSyncErrorWarningResources
     Properties:
-      Name: datasync-error-warning-cloudwatch-event
+      Name: aws-alerts-datasync-error-warning-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         DataSync Errors and Warnings.
@@ -1919,10 +1919,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateIoTAnalyticsFailureResources
     Properties:
-      Name: iot-analytics-failure-cloudwatch-event
+      Name: aws-alerts-iot-analytics-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS IoT
-        Analytics Failures.
+        Analytics failures.
       EventPattern:
         source:
           - aws.iotanalytics
@@ -1958,7 +1958,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateDataLifecycleManagerErrorResources
     Properties:
-      Name: data-lifecycle-manager-error-cloudwatch-event
+      Name: aws-alerts-data-lifecycle-manager-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Data
         Lifecycle Manager Errors.
@@ -1997,7 +1997,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateElementalMediaPackageErrorResources
     Properties:
-      Name: elemental-mediapackage-error-cloudwatch-event
+      Name: aws-alerts-elemental-mediapackage-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         Elemental MediaPackage Errors.
@@ -2039,7 +2039,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateElementalMediaLiveErrorResources
     Properties:
-      Name: elemental-medialive-error-cloudwatch-event
+      Name: aws-alerts-elemental-medialive-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         Elemental MediaLive Errors.
@@ -2075,7 +2075,7 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateElementalMediaConvertErrorResources
     Properties:
-      Name: elemental-mediaconvert-error-cloudwatch-event
+      Name: aws-alerts-elemental-mediaconvert-error-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
         Elemental MediaConvert Errors.
@@ -2114,10 +2114,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSageMakerHyperParameterTuningFailureResources
     Properties:
-      Name: sagemaker-hyperparameter-tuning-failure-cloudwatch-event
+      Name: aws-alerts-sagemaker-hyperparameter-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        SageMaker HyperParameter Tuning Failures.
+        SageMaker HyperParameter Tuning Job failures.
       EventPattern:
         source:
           - aws.sagemaker
@@ -2153,10 +2153,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSageMakerTransformFailureResources
     Properties:
-      Name: sagemaker-transform-failure-cloudwatch-event
+      Name: aws-alerts-sagemaker-transform-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        SageMaker Transform Failures.
+        SageMaker Transform Job failures.
       EventPattern:
         source:
           - aws.sagemaker
@@ -2192,10 +2192,10 @@ Resources:
       - AWSAlertsSNSTopic
     Condition: CreateSageMakerTrainingFailureResources
     Properties:
-      Name: sagemaker-training-failure-cloudwatch-event
+      Name: aws-alerts-sagemaker-training-failure-cloudwatch-event
       Description: >-
         AWS CloudWatch Event to send alerts on AWS SNS regarding AWS
-        SageMaker Training Failures.
+        SageMaker Training Job failures.
       EventPattern:
         source:
           - aws.sagemaker

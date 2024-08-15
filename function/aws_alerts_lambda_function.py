@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
-"""Python script to be used by an AWS Lambda function to send alerts to AWS SNS topic."""
+"""
+Python script to be used by an AWS Lambda function to send alerts to AWS SNS topic.
+"""
 
-# Required imports
+# required imports
 import os
 import sys
 import json
@@ -30,16 +32,16 @@ def lambda_handler(event, context):
     )['Parameter']['Value']
 
     print("Extracting data from the event and formatting it...")
-    event_subject = str(event['Records'][0]['Sns']['Subject'])
+    event_title = str(event['Records'][0]['Sns']['Subject'])
     event_message = str(event['Records'][0]['Sns']['Message'])
     event_message_json = json.loads(event_message)
-    if event_subject == "None":
+    if event_title == "None":
         if 'name' in event_message_json and 'region' in event_message_json:
             event_name = str(event_message_json['name'])
             event_region = str(event_message_json['region'])
-            event_subject = f"EVENT: '{event_name}' in {event_region}"
+            event_title = f"EVENT: '{event_name}' in {event_region}"
         else:
-            event_subject = "EVENT"
+            event_title = "EVENT"
     keys_to_remove = [
         'AlarmActions',
         'AlarmConfigurationUpdatedTimestamp',
@@ -70,11 +72,14 @@ def lambda_handler(event, context):
     keys_to_remove_from_details = [
         'ActivityId',
         'additional-information',
+        'communicationId',
         'current-phase-context',
         'current-phase',
         'EndTime',
+        'page',
         'RequestId',
         'StartTime',
+        'totalPages,',
         'version'
     ]
     if 'details' in event_message_json and isinstance(event_message_json['details'], dict):
@@ -84,11 +89,11 @@ def lambda_handler(event, context):
     event_message_formatted = f"```{json.dumps(event_message_json, indent=4)}```"
 
     print("Sending the alert to Slack...")
-    slack_data = {
+    slack_message = {
         "attachments": [
             {
                 "pretext": "*AWS Alert*",
-                "title": f":warning: Alert: {event_subject}",
+                "title": f":warning: Alert: {event_title}",
                 "text": f":exclamation: *Description:* {event_message_formatted}",
                 "color": "#ff0000"
             }
@@ -97,7 +102,7 @@ def lambda_handler(event, context):
     try:
         response = requests.post(
             slack_webhook_url,
-            data=json.dumps(slack_data),
+            data=json.dumps(slack_message),
             headers={'Content-Type': "application/json"},
             timeout=10)
         response.raise_for_status()

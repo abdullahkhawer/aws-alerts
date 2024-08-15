@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 2024-08-15
+
+### 🐛 Bug Fixes
+
+- Refactor code to correct the name and description of some resources.
+- Refactor code to correct comments, description, variable names and list of keys to drop from 'details' key.
+- Refactor code to correct the variable names and indentation.
+- Refactor code to correct the variable names.
+- Refactor code to correct the name, description, tags and/or TF resource names of some resources, some variable names, list of AWS services under Principal in AWS SNS topic policy and logic to get the list of all AWS Lambda functions excluding 'aws-alerts-lambda-function'.
+
 ## [2.0.1] - 2024-07-04
 
 ### 🐛 Bug Fixes
@@ -12,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 - Update README.md to add examples of AWS Alerts on Slack as notifications
 - Add 'code.zip' in .gitignore
+- *(release)* Prepare Release for v2.0.1.
 
 ## [2.0.0] - 2024-07-04
 

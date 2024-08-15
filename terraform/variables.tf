@@ -237,19 +237,19 @@ variable "enable_elemental_media_convert_error_alerts" {
   default     = false
 }
 
-variable "enable_sage_maker_hyper_parameter_tuning_failure_alerts" {
+variable "enable_sagemaker_hyperparameter_failure_alerts" {
   description = "Option to Enable AWS SageMaker HyperParameter Tuning Failure Notification."
   type        = string
   default     = false
 }
 
-variable "enable_sage_maker_transform_failure_alerts" {
+variable "enable_sagemaker_transform_failure_alerts" {
   description = "Option to Enable AWS SageMaker Transform Failure Notification."
   type        = string
   default     = false
 }
 
-variable "enable_sage_maker_training_failure_alerts" {
+variable "enable_sagemaker_training_failure_alerts" {
   description = "Option to Enable AWS SageMaker Training Failure Notification."
   type        = string
   default     = false

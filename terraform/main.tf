@@ -5,7 +5,8 @@ data "aws_lambda_functions" "all" {}
 data "aws_region" "current" {}
 
 locals {
-  lambda_function_names         = length(var.lambda_function_names) == 0 ? data.aws_lambda_functions.all.function_names : var.lambda_function_names
+  all_lambda_function_names     = tolist(setsubtract(data.aws_lambda_functions.all.function_names, ["aws-alerts-lambda-function"]))
+  lambda_function_names         = length(var.lambda_function_names) == 0 ? local.all_lambda_function_names : var.lambda_function_names
   lambda_function_build_command = "pip3 install -r ${path.module}/../function/requirements.txt -t ${path.module}/../function --no-cache-dir --upgrade"
 }
 
@@ -49,11 +50,11 @@ resource "aws_sns_topic_policy" "aws_alerts_sns_topic_policy" {
         Effect = "Allow"
         Principal = {
           Service = [
+            "cloudwatch.amazonaws.com",
             "datapipeline.amazonaws.com",
             "dms.amazonaws.com",
             "events.amazonaws.com",
             "lambda.amazonaws.com",
-            "cloudwatch.amazonaws.com",
             "monitoring.rds.amazonaws.com",
             "rds.amazonaws.com",
             "s3.amazonaws.com"
@@ -177,11 +178,11 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
   source_arn    = aws_sns_topic.aws_alerts_sns_topic.id
 }
 
-resource "aws_cloudwatch_metric_alarm" "lambda_failure_cloud_watch_alarm" {
+resource "aws_cloudwatch_metric_alarm" "lambda_function_failure_cloudwatch_alarm" {
   count = var.enable_lambda_failure_alerts ? length(local.lambda_function_names) : 0
 
-  alarm_name          = "aws-alerts-lambda-function-${local.lambda_function_names[count.index]}-failure-alarm"
-  alarm_description   = "AWS CloudWatch Alarm to send alerts on AWS SNS regarding AWS Lambda function failures for '${local.lambda_function_names[count.index]}' function."
+  alarm_name          = "aws-alerts-lambda-function-failure-alarm-${count.index}"
+  alarm_description   = "AWS CloudWatch alarm to send alerts on AWS SNS regarding AWS Lambda function '${local.lambda_function_names[count.index]}' failures."
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -200,9 +201,9 @@ resource "aws_cloudwatch_metric_alarm" "lambda_failure_cloud_watch_alarm" {
   ]
 }
 
-resource "aws_dms_event_subscription" "dms_instance_failure_event" {
+resource "aws_dms_event_subscription" "dms_instance_failure_warning_event" {
   count = var.enable_dms_failure_warning_alerts ? 1 : 0
-  name  = "dms-instance-failure-warning-event"
+  name  = "aws-alerts-dms-instance-failure-warning-event"
   event_categories = [
     "failure",
     "low storage",
@@ -212,13 +213,13 @@ resource "aws_dms_event_subscription" "dms_instance_failure_event" {
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.id
   source_type   = "replication-instance"
   tags = {
-    Name = "dms-instance-failure-event"
+    Name = "aws-alerts-dms-instance-failure-warning-event"
   }
 }
 
 resource "aws_dms_event_subscription" "dms_task_failure_event" {
   count = var.enable_dms_failure_warning_alerts ? 1 : 0
-  name  = "dms-task-failure-event"
+  name  = "aws-alerts-dms-task-failure-event"
   event_categories = [
     "failure",
     "deletion"
@@ -226,13 +227,13 @@ resource "aws_dms_event_subscription" "dms_task_failure_event" {
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.id
   source_type   = "replication-task"
   tags = {
-    Name = "dms-task-failure-event"
+    Name = "aws-alerts-dms-task-failure-event"
   }
 }
 
 resource "aws_db_event_subscription" "db_instance_failure_warning_event" {
   count       = var.enable_rds_failure_warning_alerts ? 1 : 0
-  name        = "aws-rds-event-subscription-db-instance-failure-warning-event"
+  name        = "aws-alerts-rds-db-instance-failure-warning-event"
   sns_topic   = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type = "db-instance"
 
@@ -245,7 +246,7 @@ resource "aws_db_event_subscription" "db_instance_failure_warning_event" {
 
 resource "aws_db_event_subscription" "db_security_group_failure_warning_event" {
   count       = var.enable_rds_failure_warning_alerts ? 1 : 0
-  name        = "aws-rds-event-subscription-db-security-group-failure-warning-event"
+  name        = "aws-alerts-rds-db-security-group-failure-warning-event"
   sns_topic   = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type = "db-security-group"
 
@@ -256,7 +257,7 @@ resource "aws_db_event_subscription" "db_security_group_failure_warning_event" {
 
 resource "aws_db_event_subscription" "db_cluster_failure_warning_event" {
   count       = var.enable_rds_failure_warning_alerts ? 1 : 0
-  name        = "aws-rds-event-subscription-db-cluster-failure-warning-event"
+  name        = "aws-alerts-rds-db-cluster-failure-warning-event"
   sns_topic   = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type = "db-cluster"
 
@@ -269,7 +270,7 @@ resource "aws_db_event_subscription" "db_cluster_failure_warning_event" {
 
 resource "aws_db_event_subscription" "custom_engine_version_failure_warning_event" {
   count       = var.enable_rds_failure_warning_alerts ? 1 : 0
-  name        = "aws-rds-event-subscription-custom-engine-version-failure-warning-event"
+  name        = "aws-alerts-rds-custom-engine-version-failure-warning-event"
   sns_topic   = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type = "custom-engine-version"
 
@@ -280,7 +281,7 @@ resource "aws_db_event_subscription" "custom_engine_version_failure_warning_even
 
 resource "aws_db_event_subscription" "blue_green_deployment_failure_warning_event" {
   count       = var.enable_rds_failure_warning_alerts ? 1 : 0
-  name        = "aws-rds-event-subscription-blue-green-deployment-failure-warning-event"
+  name        = "aws-alerts-rds-blue-green-deployment-failure-warning-event"
   sns_topic   = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type = "blue-green-deployment"
 
@@ -291,7 +292,7 @@ resource "aws_db_event_subscription" "blue_green_deployment_failure_warning_even
 
 resource "aws_redshift_event_subscription" "cluster_error_event" {
   count         = var.enable_redshift_error_alerts ? 1 : 0
-  name          = "aws-redshift-event-subscription-cluster-error-event"
+  name          = "aws-alerts-redshift-cluster-error-event"
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type   = "cluster"
   severity      = "ERROR"
@@ -299,7 +300,7 @@ resource "aws_redshift_event_subscription" "cluster_error_event" {
 
 resource "aws_redshift_event_subscription" "cluster_parameter_group_error_event" {
   count         = var.enable_redshift_error_alerts ? 1 : 0
-  name          = "aws-redshift-event-subscription-cluster-parameter-group-error-event"
+  name          = "aws-alerts-redshift-cluster-parameter-group-error-event"
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type   = "cluster-parameter-group"
   severity      = "ERROR"
@@ -307,7 +308,7 @@ resource "aws_redshift_event_subscription" "cluster_parameter_group_error_event"
 
 resource "aws_redshift_event_subscription" "cluster_security_group_error_event" {
   count         = var.enable_redshift_error_alerts ? 1 : 0
-  name          = "aws-redshift-event-subscription-cluster-security-group-error-event"
+  name          = "aws-alerts-redshift-cluster-security-group-error-event"
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type   = "cluster-security-group"
   severity      = "ERROR"
@@ -315,7 +316,7 @@ resource "aws_redshift_event_subscription" "cluster_security_group_error_event" 
 
 resource "aws_redshift_event_subscription" "cluster_snapshot_error_event" {
   count         = var.enable_redshift_error_alerts ? 1 : 0
-  name          = "aws-redshift-event-subscription-cluster-snapshot-error-event"
+  name          = "aws-alerts-redshift-cluster-snapshot-error-event"
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type   = "cluster-snapshot"
   severity      = "ERROR"
@@ -323,16 +324,16 @@ resource "aws_redshift_event_subscription" "cluster_snapshot_error_event" {
 
 resource "aws_redshift_event_subscription" "scheduled_action_error_event" {
   count         = var.enable_redshift_error_alerts ? 1 : 0
-  name          = "aws-redshift-event-subscription-scheduled-action-error-event"
+  name          = "aws-alerts-redshift-scheduled-action-error-event"
   sns_topic_arn = aws_sns_topic.aws_alerts_sns_topic.arn
   source_type   = "scheduled-action"
   severity      = "ERROR"
 }
 
-resource "aws_cloudwatch_event_rule" "cb_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "codebuild_failure_cloudwatch_event" {
   count       = var.enable_code_build_failure_alerts ? 1 : 0
-  name        = "cb-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS CodeBuild Failures."
+  name        = "aws-alerts-codebuild-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS CodeBuild failures."
   event_pattern = jsonencode({
     source = [
       "aws.codebuild"
@@ -348,9 +349,9 @@ resource "aws_cloudwatch_event_rule" "cb_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "cb_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "codebuild_failure_cloudwatch_event_target" {
   count     = var.enable_code_build_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.cb_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.codebuild_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -377,10 +378,10 @@ EOF
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ec2_auto_scaling_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ec2_auto_scaling_failure_cloudwatch_event" {
   count       = var.enable_ec2_auto_scaling_failure_alerts ? 1 : 0
-  name        = "ec2-autoscaling-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2 Auto Scaling Failures."
+  name        = "aws-alerts-ec2-autoscaling-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EC2 Auto Scaling failures."
   event_pattern = jsonencode({
     source = [
       "aws.autoscaling"
@@ -392,9 +393,9 @@ resource "aws_cloudwatch_event_rule" "ec2_auto_scaling_failure_cloud_watch_event
   })
 }
 
-resource "aws_cloudwatch_event_target" "ec2_auto_scaling_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ec2_auto_scaling_failure_cloudwatch_event_target" {
   count     = var.enable_ec2_auto_scaling_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ec2_auto_scaling_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ec2_auto_scaling_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -421,10 +422,10 @@ EOF
   }
 }
 
-resource "aws_cloudwatch_event_rule" "batch_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "batch_failure_cloudwatch_event" {
   count       = var.enable_batch_failure_alerts ? 1 : 0
-  name        = "batch-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Batch Failures."
+  name        = "aws-alerts-batch-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Batch failures."
   event_pattern = jsonencode({
     source = [
       "aws.batch"
@@ -440,9 +441,9 @@ resource "aws_cloudwatch_event_rule" "batch_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "batch_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "batch_failure_cloudwatch_event_target" {
   count     = var.enable_batch_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.batch_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.batch_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -469,10 +470,10 @@ resource "aws_cloudwatch_event_target" "batch_failure_cloud_watch_event_target" 
   }
 }
 
-resource "aws_cloudwatch_event_rule" "code_deploy_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "code_deploy_failure_cloudwatch_event" {
   count       = var.enable_code_deploy_failure_alerts ? 1 : 0
-  name        = "codedeploy-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS CodeDeploy Failures."
+  name        = "aws-alerts-codedeploy-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS CodeDeploy failures."
   event_pattern = jsonencode({
     source = [
       "aws.codedeploy"
@@ -489,9 +490,9 @@ resource "aws_cloudwatch_event_rule" "code_deploy_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "code_deploy_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "code_deploy_failure_cloudwatch_event_target" {
   count     = var.enable_code_deploy_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.code_deploy_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.code_deploy_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -518,10 +519,10 @@ resource "aws_cloudwatch_event_target" "code_deploy_failure_cloud_watch_event_ta
   }
 }
 
-resource "aws_cloudwatch_event_rule" "code_pipeline_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "code_pipeline_failure_cloudwatch_event" {
   count       = var.enable_code_pipeline_failure_alerts ? 1 : 0
-  name        = "codepipeline-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS CodePipeline Failures."
+  name        = "aws-alerts-codepipeline-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS CodePipeline failures."
   event_pattern = jsonencode({
     source = [
       "aws.codepipeline"
@@ -538,9 +539,9 @@ resource "aws_cloudwatch_event_rule" "code_pipeline_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "code_pipeline_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "code_pipeline_failure_cloudwatch_event_target" {
   count     = var.enable_code_pipeline_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.code_pipeline_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.code_pipeline_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -567,10 +568,10 @@ resource "aws_cloudwatch_event_target" "code_pipeline_failure_cloud_watch_event_
   }
 }
 
-resource "aws_cloudwatch_event_rule" "config_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "config_failure_cloudwatch_event" {
   count       = var.enable_config_failure_alerts ? 1 : 0
-  name        = "config-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Config Failures."
+  name        = "aws-alerts-config-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Config failures."
   event_pattern = jsonencode({
     source = [
       "aws.config"
@@ -586,9 +587,9 @@ resource "aws_cloudwatch_event_rule" "config_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "config_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "config_failure_cloudwatch_event_target" {
   count     = var.enable_config_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.config_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.config_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -615,10 +616,10 @@ resource "aws_cloudwatch_event_target" "config_failure_cloud_watch_event_target"
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ebs_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ebs_failure_cloudwatch_event" {
   count       = var.enable_ebs_failure_alerts ? 1 : 0
-  name        = "ebs-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EBS Failures."
+  name        = "aws-alerts-ebs-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EBS failures."
   event_pattern = jsonencode({
     source = [
       "aws.ec2"
@@ -645,9 +646,9 @@ resource "aws_cloudwatch_event_rule" "ebs_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "ebs_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ebs_failure_cloudwatch_event_target" {
   count     = var.enable_ebs_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ebs_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ebs_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -674,10 +675,10 @@ resource "aws_cloudwatch_event_target" "ebs_failure_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "glue_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "glue_failure_cloudwatch_event" {
   count       = var.enable_glue_failure_alerts ? 1 : 0
-  name        = "glue-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Glue Failures."
+  name        = "aws-alerts-glue-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Glue failures."
   event_pattern = jsonencode({
     source = [
       "aws.glue"
@@ -695,9 +696,9 @@ resource "aws_cloudwatch_event_rule" "glue_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "glue_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "glue_failure_cloudwatch_event_target" {
   count     = var.enable_glue_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.glue_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.glue_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -724,10 +725,10 @@ resource "aws_cloudwatch_event_target" "glue_failure_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "emr_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "emr_failure_cloudwatch_event" {
   count       = var.enable_emr_failure_alerts ? 1 : 0
-  name        = "emr-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EMR Failures."
+  name        = "aws-alerts-emr-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EMR failures."
   event_pattern = jsonencode({
     source = [
       "aws.emr"
@@ -750,9 +751,9 @@ resource "aws_cloudwatch_event_rule" "emr_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "emr_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "emr_failure_cloudwatch_event_target" {
   count     = var.enable_emr_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.emr_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.emr_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -779,10 +780,10 @@ resource "aws_cloudwatch_event_target" "emr_failure_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "emr_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "emr_error_cloudwatch_event" {
   count       = var.enable_emr_error_alerts ? 1 : 0
-  name        = "emr-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EMR Errors."
+  name        = "aws-alerts-emr-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EMR Errors."
   event_pattern = jsonencode({
     source = [
       "aws.emr"
@@ -793,9 +794,9 @@ resource "aws_cloudwatch_event_rule" "emr_error_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "emr_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "emr_error_cloudwatch_event_target" {
   count     = var.enable_emr_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.emr_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.emr_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -822,10 +823,10 @@ resource "aws_cloudwatch_event_target" "emr_error_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ecs_instance_termination_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ecs_instance_termination_cloudwatch_event" {
   count       = var.enable_ecs_instance_termination_alerts ? 1 : 0
-  name        = "ecs-instance-termination-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS ECS Instance Terminations."
+  name        = "aws-alerts-ecs-instance-termination-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS ECS Instance Terminations."
   event_pattern = jsonencode({
     source = [
       "aws.ecs"
@@ -841,9 +842,9 @@ resource "aws_cloudwatch_event_rule" "ecs_instance_termination_cloud_watch_event
   })
 }
 
-resource "aws_cloudwatch_event_target" "ecs_instance_termination_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ecs_instance_termination_cloudwatch_event_target" {
   count     = var.enable_ecs_instance_termination_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ecs_instance_termination_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ecs_instance_termination_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -870,10 +871,10 @@ resource "aws_cloudwatch_event_target" "ecs_instance_termination_cloud_watch_eve
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ecs_task_termination_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ecs_task_termination_cloudwatch_event" {
   count       = var.enable_ecs_task_termination_alerts ? 1 : 0
-  name        = "ecs-task-termination-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS ECS Task Terminations."
+  name        = "aws-alerts-ecs-task-termination-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS ECS Task Terminations."
   event_pattern = jsonencode({
     source = [
       "aws.ecs"
@@ -889,9 +890,9 @@ resource "aws_cloudwatch_event_rule" "ecs_task_termination_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "ecs_task_termination_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ecs_task_termination_cloudwatch_event_target" {
   count     = var.enable_ecs_task_termination_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ecs_task_termination_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ecs_task_termination_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -918,10 +919,10 @@ resource "aws_cloudwatch_event_target" "ecs_task_termination_cloud_watch_event_t
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ec2_instance_termination_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ec2_instance_termination_cloudwatch_event" {
   count       = var.enable_ec2_instance_termination_alerts ? 1 : 0
-  name        = "ec2-instance-termination-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2 Instance Terminations."
+  name        = "aws-alerts-ec2-instance-termination-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EC2 Instance Terminations."
   event_pattern = jsonencode({
     source = [
       "aws.ec2"
@@ -938,9 +939,9 @@ resource "aws_cloudwatch_event_rule" "ec2_instance_termination_cloud_watch_event
   })
 }
 
-resource "aws_cloudwatch_event_target" "ec2_instance_termination_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ec2_instance_termination_cloudwatch_event_target" {
   count     = var.enable_ec2_instance_termination_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ec2_instance_termination_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ec2_instance_termination_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -967,10 +968,10 @@ resource "aws_cloudwatch_event_target" "ec2_instance_termination_cloud_watch_eve
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ec2_spot_instance_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ec2_spot_instance_error_cloudwatch_event" {
   count       = var.enable_ec2_spot_instance_error_alerts ? 1 : 0
-  name        = "ec2-spot-instance-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS EC2 Spot Instance Errors."
+  name        = "aws-alerts-ec2-spot-instance-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS EC2 Spot Instance Errors."
   event_pattern = jsonencode({
     source = [
       "aws.ec2"
@@ -981,9 +982,9 @@ resource "aws_cloudwatch_event_rule" "ec2_spot_instance_error_cloud_watch_event"
   })
 }
 
-resource "aws_cloudwatch_event_target" "ec2_spot_instance_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ec2_spot_instance_error_cloudwatch_event_target" {
   count     = var.enable_ec2_spot_instance_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ec2_spot_instance_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ec2_spot_instance_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1010,10 +1011,10 @@ resource "aws_cloudwatch_event_target" "ec2_spot_instance_error_cloud_watch_even
   }
 }
 
-resource "aws_cloudwatch_event_rule" "trusted_advisor_error_warning_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "trusted_advisor_error_warning_cloudwatch_event" {
   count       = var.enable_trusted_advisor_error_warning_alerts ? 1 : 0
-  name        = "trusted-advisor-error-warning-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Trusted Advisor Errors and Warnings."
+  name        = "aws-alerts-trusted-advisor-error-warning-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Trusted Advisor Errors and Warnings."
   event_pattern = jsonencode({
     source = [
       "aws.trustedadvisor"
@@ -1030,9 +1031,9 @@ resource "aws_cloudwatch_event_rule" "trusted_advisor_error_warning_cloud_watch_
   })
 }
 
-resource "aws_cloudwatch_event_target" "trusted_advisor_error_warning_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "trusted_advisor_error_warning_cloudwatch_event_target" {
   count     = var.enable_trusted_advisor_error_warning_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.trusted_advisor_error_warning_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.trusted_advisor_error_warning_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1059,10 +1060,10 @@ resource "aws_cloudwatch_event_target" "trusted_advisor_error_warning_cloud_watc
   }
 }
 
-resource "aws_cloudwatch_event_rule" "health_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "health_error_cloudwatch_event" {
   count       = var.enable_health_error_alerts ? 1 : 0
-  name        = "health-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Health Errors."
+  name        = "aws-alerts-health-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Health Errors."
   event_pattern = jsonencode({
     source = [
       "aws.health"
@@ -1079,9 +1080,9 @@ resource "aws_cloudwatch_event_rule" "health_error_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "health_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "health_error_cloudwatch_event_target" {
   count     = var.enable_health_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.health_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.health_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1108,10 +1109,10 @@ resource "aws_cloudwatch_event_target" "health_error_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "sms_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "sms_failure_cloudwatch_event" {
   count       = var.enable_sms_failure_alerts ? 1 : 0
-  name        = "sms-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SMS Failures."
+  name        = "aws-alerts-sms-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SMS failures."
   event_pattern = jsonencode({
     source = [
       "aws.sms"
@@ -1127,9 +1128,9 @@ resource "aws_cloudwatch_event_rule" "sms_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "sms_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "sms_failure_cloudwatch_event_target" {
   count     = var.enable_sms_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.sms_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.sms_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1156,10 +1157,10 @@ resource "aws_cloudwatch_event_target" "sms_failure_cloud_watch_event_target" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "step_functions_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "step_functions_failure_cloudwatch_event" {
   count       = var.enable_step_functions_failure_alerts ? 1 : 0
-  name        = "step-functions-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Step Functions Failures."
+  name        = "aws-alerts-step-functions-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Step Functions failures."
   event_pattern = jsonencode({
     source = [
       "aws.states"
@@ -1177,9 +1178,9 @@ resource "aws_cloudwatch_event_rule" "step_functions_failure_cloud_watch_event" 
   })
 }
 
-resource "aws_cloudwatch_event_target" "step_functions_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "step_functions_failure_cloudwatch_event_target" {
   count     = var.enable_step_functions_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.step_functions_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.step_functions_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1206,10 +1207,10 @@ resource "aws_cloudwatch_event_target" "step_functions_failure_cloud_watch_event
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ssm_maintainance_window_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ssm_maintainance_window_failure_cloudwatch_event" {
   count       = var.enable_ssm_maintainance_window_failure_alerts ? 1 : 0
-  name        = "ssm-maintainance-window-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM Maintainance Window Failures."
+  name        = "aws-alerts-ssm-maintainance-window-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SSM Maintainance Window failures."
   event_pattern = jsonencode({
     source = [
       "aws.ssm"
@@ -1229,9 +1230,9 @@ resource "aws_cloudwatch_event_rule" "ssm_maintainance_window_failure_cloud_watc
   })
 }
 
-resource "aws_cloudwatch_event_target" "ssm_maintainance_window_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ssm_maintainance_window_failure_cloudwatch_event_target" {
   count     = var.enable_ssm_maintainance_window_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ssm_maintainance_window_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ssm_maintainance_window_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1258,10 +1259,10 @@ resource "aws_cloudwatch_event_target" "ssm_maintainance_window_failure_cloud_wa
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ssmec2_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ssmec2_failure_cloudwatch_event" {
   count       = var.enable_ssmec2_failure_alerts ? 1 : 0
-  name        = "ssm-ec2-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM EC2 State Manager, Run Command and Automation Failures."
+  name        = "aws-alerts-ssm-ec2-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SSM EC2 State Manager, Run Command and Automation failures."
   event_pattern = jsonencode({
     source = [
       "aws.ssm"
@@ -1284,9 +1285,9 @@ resource "aws_cloudwatch_event_rule" "ssmec2_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "ssmec2_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ssmec2_failure_cloudwatch_event_target" {
   count     = var.enable_ssmec2_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ssmec2_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ssmec2_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1313,10 +1314,10 @@ resource "aws_cloudwatch_event_target" "ssmec2_failure_cloud_watch_event_target"
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ssm_compliance_warning_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ssm_compliance_warning_cloudwatch_event" {
   count       = var.enable_ssm_compliance_warning_alerts ? 1 : 0
-  name        = "ssm-compliance-warning-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SSM Compliance Warnings."
+  name        = "aws-alerts-ssm-compliance-warning-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SSM Compliance Warnings."
   event_pattern = jsonencode({
     source = [
       "aws.ssm"
@@ -1332,9 +1333,9 @@ resource "aws_cloudwatch_event_rule" "ssm_compliance_warning_cloud_watch_event" 
   })
 }
 
-resource "aws_cloudwatch_event_target" "ssm_compliance_warning_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ssm_compliance_warning_cloudwatch_event_target" {
   count     = var.enable_ssm_compliance_warning_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ssm_compliance_warning_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ssm_compliance_warning_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1361,10 +1362,10 @@ resource "aws_cloudwatch_event_target" "ssm_compliance_warning_cloud_watch_event
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ops_works_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ops_works_failure_cloudwatch_event" {
   count       = var.enable_ops_works_failure_alerts ? 1 : 0
-  name        = "opsworks-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS OpsWorks Failures."
+  name        = "aws-alerts-opsworks-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS OpsWorks failures."
   event_pattern = jsonencode({
     source = [
       "aws.opsworks"
@@ -1391,9 +1392,9 @@ resource "aws_cloudwatch_event_rule" "ops_works_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "ops_works_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ops_works_failure_cloudwatch_event_target" {
   count     = var.enable_ops_works_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ops_works_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ops_works_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1420,10 +1421,10 @@ resource "aws_cloudwatch_event_target" "ops_works_failure_cloud_watch_event_targ
   }
 }
 
-resource "aws_cloudwatch_event_rule" "ops_works_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "ops_works_error_cloudwatch_event" {
   count       = var.enable_ops_works_error_alerts ? 1 : 0
-  name        = "opsworks-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS OpsWorks Errors."
+  name        = "aws-alerts-opsworks-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS OpsWorks Errors."
   event_pattern = jsonencode({
     source = [
       "aws.opsworks"
@@ -1434,9 +1435,9 @@ resource "aws_cloudwatch_event_rule" "ops_works_error_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "ops_works_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "ops_works_error_cloudwatch_event_target" {
   count     = var.enable_ops_works_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.ops_works_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.ops_works_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1463,10 +1464,10 @@ resource "aws_cloudwatch_event_target" "ops_works_error_cloud_watch_event_target
   }
 }
 
-resource "aws_cloudwatch_event_rule" "kms_key_expiration_warning_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "kms_key_expiration_warning_cloudwatch_event" {
   count       = var.enable_kms_key_expiration_warning_alerts ? 1 : 0
-  name        = "kms-key-expiration-warning-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS KMS Key Expiration Warnings."
+  name        = "aws-alerts-kms-key-expiration-warning-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS KMS Key Expiration Warnings."
   event_pattern = jsonencode({
     source = [
       "aws.kms"
@@ -1477,9 +1478,9 @@ resource "aws_cloudwatch_event_rule" "kms_key_expiration_warning_cloud_watch_eve
   })
 }
 
-resource "aws_cloudwatch_event_target" "kms_key_expiration_warning_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "kms_key_expiration_warning_cloudwatch_event_target" {
   count     = var.enable_kms_key_expiration_warning_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.kms_key_expiration_warning_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.kms_key_expiration_warning_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1506,10 +1507,10 @@ resource "aws_cloudwatch_event_target" "kms_key_expiration_warning_cloud_watch_e
   }
 }
 
-resource "aws_cloudwatch_event_rule" "macie_warning_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "macie_warning_cloudwatch_event" {
   count       = var.enable_macie_warning_alerts ? 1 : 0
-  name        = "macie-warning-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Macie Warnings."
+  name        = "aws-alerts-macie-warning-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Macie Warnings."
   event_pattern = jsonencode({
     source = [
       "aws.macie"
@@ -1520,9 +1521,9 @@ resource "aws_cloudwatch_event_rule" "macie_warning_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "macie_warning_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "macie_warning_cloudwatch_event_target" {
   count     = var.enable_macie_warning_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.macie_warning_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.macie_warning_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1549,10 +1550,10 @@ resource "aws_cloudwatch_event_target" "macie_warning_cloud_watch_event_target" 
   }
 }
 
-resource "aws_cloudwatch_event_rule" "game_lift_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "game_lift_failure_cloudwatch_event" {
   count       = var.enable_game_lift_failure_alerts ? 1 : 0
-  name        = "gamelift-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS GameLift Failures."
+  name        = "aws-alerts-gamelift-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS GameLift failures."
   event_pattern = jsonencode({
     source = [
       "aws.gamelift"
@@ -1570,9 +1571,9 @@ resource "aws_cloudwatch_event_rule" "game_lift_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "game_lift_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "game_lift_failure_cloudwatch_event_target" {
   count     = var.enable_game_lift_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.game_lift_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.game_lift_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1599,10 +1600,10 @@ resource "aws_cloudwatch_event_target" "game_lift_failure_cloud_watch_event_targ
   }
 }
 
-resource "aws_cloudwatch_event_rule" "transcribe_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "transcribe_failure_cloudwatch_event" {
   count       = var.enable_transcribe_failure_alerts ? 1 : 0
-  name        = "transcribe-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Transcribe Failures."
+  name        = "aws-alerts-transcribe-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Transcribe failures."
   event_pattern = jsonencode({
     source = [
       "aws.transcribe"
@@ -1618,9 +1619,9 @@ resource "aws_cloudwatch_event_rule" "transcribe_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "transcribe_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "transcribe_failure_cloudwatch_event_target" {
   count     = var.enable_transcribe_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.transcribe_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.transcribe_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1647,10 +1648,10 @@ resource "aws_cloudwatch_event_target" "transcribe_failure_cloud_watch_event_tar
   }
 }
 
-resource "aws_cloudwatch_event_rule" "signer_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "signer_failure_cloudwatch_event" {
   count       = var.enable_signer_failure_alerts ? 1 : 0
-  name        = "signer-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Signer Failures."
+  name        = "aws-alerts-signer-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Signer failures."
   event_pattern = jsonencode({
     source = [
       "aws.signer"
@@ -1666,9 +1667,9 @@ resource "aws_cloudwatch_event_rule" "signer_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "signer_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "signer_failure_cloudwatch_event_target" {
   count     = var.enable_signer_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.signer_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.signer_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1695,10 +1696,10 @@ resource "aws_cloudwatch_event_target" "signer_failure_cloud_watch_event_target"
   }
 }
 
-resource "aws_cloudwatch_event_rule" "data_sync_error_warning_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "data_sync_error_warning_cloudwatch_event" {
   count       = var.enable_data_sync_error_warning_alerts ? 1 : 0
-  name        = "datasync-error-warning-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS DataSync Errors and Warnings."
+  name        = "aws-alerts-datasync-error-warning-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS DataSync Errors and Warnings."
   event_pattern = jsonencode({
     source = [
       "aws.datasync"
@@ -1718,9 +1719,9 @@ resource "aws_cloudwatch_event_rule" "data_sync_error_warning_cloud_watch_event"
   })
 }
 
-resource "aws_cloudwatch_event_target" "data_sync_error_warning_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "data_sync_error_warning_cloudwatch_event_target" {
   count     = var.enable_data_sync_error_warning_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.data_sync_error_warning_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.data_sync_error_warning_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1747,10 +1748,10 @@ resource "aws_cloudwatch_event_target" "data_sync_error_warning_cloud_watch_even
   }
 }
 
-resource "aws_cloudwatch_event_rule" "iot_analytics_failure_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "iot_analytics_failure_cloudwatch_event" {
   count       = var.enable_iot_analytics_failure_alerts ? 1 : 0
-  name        = "iot-analytics-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS IoT Analytics Failures."
+  name        = "aws-alerts-iot-analytics-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS IoT Analytics failures."
   event_pattern = jsonencode({
     source = [
       "aws.iotanalytics"
@@ -1766,9 +1767,9 @@ resource "aws_cloudwatch_event_rule" "iot_analytics_failure_cloud_watch_event" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "iot_analytics_failure_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "iot_analytics_failure_cloudwatch_event_target" {
   count     = var.enable_iot_analytics_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.iot_analytics_failure_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.iot_analytics_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1795,10 +1796,10 @@ resource "aws_cloudwatch_event_target" "iot_analytics_failure_cloud_watch_event_
   }
 }
 
-resource "aws_cloudwatch_event_rule" "data_lifecycle_manager_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "data_lifecycle_manager_error_cloudwatch_event" {
   count       = var.enable_data_lifecycle_manager_error_alerts ? 1 : 0
-  name        = "data-lifecycle-manager-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Data Lifecycle Manager Errors."
+  name        = "aws-alerts-data-lifecycle-manager-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Data Lifecycle Manager Errors."
   event_pattern = jsonencode({
     source = [
       "aws.dlm"
@@ -1814,9 +1815,9 @@ resource "aws_cloudwatch_event_rule" "data_lifecycle_manager_error_cloud_watch_e
   })
 }
 
-resource "aws_cloudwatch_event_target" "data_lifecycle_manager_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "data_lifecycle_manager_error_cloudwatch_event_target" {
   count     = var.enable_data_lifecycle_manager_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.data_lifecycle_manager_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.data_lifecycle_manager_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1843,10 +1844,10 @@ resource "aws_cloudwatch_event_target" "data_lifecycle_manager_error_cloud_watch
   }
 }
 
-resource "aws_cloudwatch_event_rule" "elemental_media_package_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "elemental_media_package_error_cloudwatch_event" {
   count       = var.enable_elemental_media_package_error_alerts ? 1 : 0
-  name        = "elemental-mediapackage-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Elemental MediaPackage Errors."
+  name        = "aws-alerts-elemental-mediapackage-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Elemental MediaPackage Errors."
   event_pattern = jsonencode({
     source = [
       "aws.mediapackage"
@@ -1865,9 +1866,9 @@ resource "aws_cloudwatch_event_rule" "elemental_media_package_error_cloud_watch_
   })
 }
 
-resource "aws_cloudwatch_event_target" "elemental_media_package_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "elemental_media_package_error_cloudwatch_event_target" {
   count     = var.enable_elemental_media_package_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.elemental_media_package_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.elemental_media_package_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1894,10 +1895,10 @@ resource "aws_cloudwatch_event_target" "elemental_media_package_error_cloud_watc
   }
 }
 
-resource "aws_cloudwatch_event_rule" "elemental_media_live_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "elemental_media_live_error_cloudwatch_event" {
   count       = var.enable_elemental_media_live_error_alerts ? 1 : 0
-  name        = "elemental-medialive-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Elemental MediaLive Errors."
+  name        = "aws-alerts-elemental-medialive-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Elemental MediaLive Errors."
   event_pattern = jsonencode({
     source = [
       "aws.medialive"
@@ -1908,9 +1909,9 @@ resource "aws_cloudwatch_event_rule" "elemental_media_live_error_cloud_watch_eve
   })
 }
 
-resource "aws_cloudwatch_event_target" "elemental_media_live_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "elemental_media_live_error_cloudwatch_event_target" {
   count     = var.enable_elemental_media_live_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.elemental_media_live_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.elemental_media_live_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1937,10 +1938,10 @@ resource "aws_cloudwatch_event_target" "elemental_media_live_error_cloud_watch_e
   }
 }
 
-resource "aws_cloudwatch_event_rule" "elemental_media_convert_error_cloud_watch_event" {
+resource "aws_cloudwatch_event_rule" "elemental_media_convert_error_cloudwatch_event" {
   count       = var.enable_elemental_media_convert_error_alerts ? 1 : 0
-  name        = "elemental-mediaconvert-error-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS Elemental MediaConvert Errors."
+  name        = "aws-alerts-elemental-mediaconvert-error-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS Elemental MediaConvert Errors."
   event_pattern = jsonencode({
     source = [
       "aws.mediaconvert"
@@ -1956,9 +1957,9 @@ resource "aws_cloudwatch_event_rule" "elemental_media_convert_error_cloud_watch_
   })
 }
 
-resource "aws_cloudwatch_event_target" "elemental_media_convert_error_cloud_watch_event_target" {
+resource "aws_cloudwatch_event_target" "elemental_media_convert_error_cloudwatch_event_target" {
   count     = var.enable_elemental_media_convert_error_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.elemental_media_convert_error_cloud_watch_event[0].name
+  rule      = aws_cloudwatch_event_rule.elemental_media_convert_error_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -1985,10 +1986,10 @@ resource "aws_cloudwatch_event_target" "elemental_media_convert_error_cloud_watc
   }
 }
 
-resource "aws_cloudwatch_event_rule" "sage_maker_hyper_parameter_tuning_failure_cloud_watch_event" {
-  count       = var.enable_sage_maker_hyper_parameter_tuning_failure_alerts ? 1 : 0
-  name        = "sagemaker-hyperparameter-tuning-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SageMaker HyperParameter Tuning Failures."
+resource "aws_cloudwatch_event_rule" "sagemaker_hyperparameter_failure_cloudwatch_event" {
+  count       = var.enable_sagemaker_hyperparameter_failure_alerts ? 1 : 0
+  name        = "aws-alerts-sagemaker-hyperparameter-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SageMaker HyperParameter Tuning Job failures."
   event_pattern = jsonencode({
     source = [
       "aws.sagemaker"
@@ -2004,9 +2005,9 @@ resource "aws_cloudwatch_event_rule" "sage_maker_hyper_parameter_tuning_failure_
   })
 }
 
-resource "aws_cloudwatch_event_target" "sage_maker_hyper_parameter_tuning_failure_cloud_watch_event_target" {
-  count     = var.enable_sage_maker_hyper_parameter_tuning_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.sage_maker_hyper_parameter_tuning_failure_cloud_watch_event[0].name
+resource "aws_cloudwatch_event_target" "sagemaker_hyperparameter_failure_cloudwatch_event_target" {
+  count     = var.enable_sagemaker_hyperparameter_failure_alerts ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.sagemaker_hyperparameter_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -2033,10 +2034,10 @@ resource "aws_cloudwatch_event_target" "sage_maker_hyper_parameter_tuning_failur
   }
 }
 
-resource "aws_cloudwatch_event_rule" "sage_maker_transform_failure_cloud_watch_event" {
-  count       = var.enable_sage_maker_transform_failure_alerts ? 1 : 0
-  name        = "sagemaker-transform-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SageMaker Transform Failures."
+resource "aws_cloudwatch_event_rule" "sagemaker_transform_failure_cloudwatch_event" {
+  count       = var.enable_sagemaker_transform_failure_alerts ? 1 : 0
+  name        = "aws-alerts-sagemaker-transform-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SageMaker Transform Job failures."
   event_pattern = jsonencode({
     source = [
       "aws.sagemaker"
@@ -2052,9 +2053,9 @@ resource "aws_cloudwatch_event_rule" "sage_maker_transform_failure_cloud_watch_e
   })
 }
 
-resource "aws_cloudwatch_event_target" "sage_maker_transform_failure_cloud_watch_event_target" {
-  count     = var.enable_sage_maker_transform_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.sage_maker_transform_failure_cloud_watch_event[0].name
+resource "aws_cloudwatch_event_target" "sagemaker_transform_failure_cloudwatch_event_target" {
+  count     = var.enable_sagemaker_transform_failure_alerts ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.sagemaker_transform_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
@@ -2081,10 +2082,10 @@ resource "aws_cloudwatch_event_target" "sage_maker_transform_failure_cloud_watch
   }
 }
 
-resource "aws_cloudwatch_event_rule" "sage_maker_training_failure_cloud_watch_event" {
-  count       = var.enable_sage_maker_training_failure_alerts ? 1 : 0
-  name        = "sagemaker-training-failure-cloudwatch-event"
-  description = "AWS CloudWatch Event to send alerts on AWS SNS regarding AWS SageMaker Training Failures."
+resource "aws_cloudwatch_event_rule" "sagemaker_training_failure_cloudwatch_event" {
+  count       = var.enable_sagemaker_training_failure_alerts ? 1 : 0
+  name        = "aws-alerts-sagemaker-training-failure-cloudwatch-event"
+  description = "AWS CloudWatch event to send alerts on AWS SNS regarding AWS SageMaker Training Job failures."
   event_pattern = jsonencode({
     source = [
       "aws.sagemaker"
@@ -2100,9 +2101,9 @@ resource "aws_cloudwatch_event_rule" "sage_maker_training_failure_cloud_watch_ev
   })
 }
 
-resource "aws_cloudwatch_event_target" "sage_maker_training_failure_cloud_watch_event_target" {
-  count     = var.enable_sage_maker_training_failure_alerts ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.sage_maker_training_failure_cloud_watch_event[0].name
+resource "aws_cloudwatch_event_target" "sagemaker_training_failure_cloudwatch_event_target" {
+  count     = var.enable_sagemaker_training_failure_alerts ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.sagemaker_training_failure_cloudwatch_event[0].name
   target_id = "FailurealertSNSTopicTarget"
   arn       = aws_sns_topic.aws_alerts_sns_topic.id
   input_transformer {
